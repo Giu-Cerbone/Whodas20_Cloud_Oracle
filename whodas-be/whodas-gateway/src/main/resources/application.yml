@@ -1,0 +1,170 @@
+server:
+  port: 7001
+
+spring:
+  main:
+    allow-bean-definition-overriding: true
+  application:
+    name: whodas-gateway
+  cloud:
+    gateway:
+      # Nessuna logica CORS nel gateway: il front-end chiama le API in
+      # modalita' pubblica e senza restrizioni tramite il proxy Angular
+      # (src/proxy.conf.json -> /api verso localhost:7001), quindi le richieste
+      # sono same-origin. Non aggiungere @CrossOrigin ne' spring.cloud.gateway.globalcors.
+      discovery:
+        locator:
+          enabled: false
+      filter:
+        request-body-caching:
+          enabled: true
+      routes:
+        # Auth controller (local) - explicit forward routes for each endpoint
+        - id: auth-login
+          uri: forward:/api/v1/auth/login
+          predicates:
+            - Path=/api/v1/auth/login
+        - id: auth-refresh
+          uri: forward:/api/v1/auth/refresh
+          predicates:
+            - Path=/api/v1/auth/refresh
+        - id: auth-client-token
+          uri: forward:/api/v1/auth/client-token
+          predicates:
+            - Path=/api/v1/auth/client-token
+        - id: auth-validate
+          uri: forward:/api/v1/auth/validate
+          predicates:
+            - Path=/api/v1/auth/validate
+        # Patient Service
+        - id: whodas-patient-service
+          uri: ${PATIENT_SERVICE_URL:http://localhost:7002}
+          predicates:
+            - Path=/api/v1/patients,/api/v1/patients/**
+        # Questionnaire Service
+        - id: whodas-questionnaire-service
+          uri: ${QUESTIONNAIRE_SERVICE_URL:http://localhost:7003}
+          predicates:
+            - Path=/api/v1/questionnaire,/api/v1/questionnaire/**
+        # Assessment Service
+        - id: whodas-assessment-service
+          uri: ${ASSESSMENT_SERVICE_URL:http://localhost:7004}
+          predicates:
+            - Path=/api/v1/assessments,/api/v1/assessments/**
+        - id: whodas-type-compile-quest
+          uri: ${ASSESSMENT_SERVICE_URL:http://localhost:7004}
+          predicates:
+            - Path=/api/v1/type-compile-quest,/api/v1/type-compile-quest/**
+# Certificate Service
+        - id: whodas-certificate-service
+          uri: ${CERTIFICATE_SERVICE_URL:http://localhost:7005}
+          predicates:
+            - Path=/api/v1/certificates,/api/v1/certificates/**
+        # Document Service
+        - id: whodas-document-service
+          uri: ${DOCUMENT_SERVICE_URL:http://localhost:7006}
+          predicates:
+            - Path=/api/v1/documents,/api/v1/documents/**
+        # Notification Service
+        - id: whodas-notification-service
+          uri: ${NOTIFICATION_SERVICE_URL:http://localhost:7007}
+          predicates:
+            - Path=/api/v1/notifications,/api/v1/notifications/**
+        # User Service
+        - id: whodas-user-service
+          uri: ${USER_SERVICE_URL:http://localhost:7008}
+          predicates:
+            - Path=/api/v1/registration,/api/v1/registration/**
+        # OpenAPI docs aggregati per lo Swagger UI unico del gateway
+        - id: docs-patient-service
+          uri: ${PATIENT_SERVICE_URL:http://localhost:7002}
+          predicates:
+            - Path=/v3/api-docs/patient-service
+          filters:
+            - SetPath=/v3/api-docs
+        - id: docs-questionnaire-service
+          uri: ${QUESTIONNAIRE_SERVICE_URL:http://localhost:7003}
+          predicates:
+            - Path=/v3/api-docs/questionnaire-service
+          filters:
+            - SetPath=/v3/api-docs
+        - id: docs-assessment-service
+          uri: ${ASSESSMENT_SERVICE_URL:http://localhost:7004}
+          predicates:
+            - Path=/v3/api-docs/assessment-service
+          filters:
+            - SetPath=/v3/api-docs
+        - id: docs-certificate-service
+          uri: ${CERTIFICATE_SERVICE_URL:http://localhost:7005}
+          predicates:
+            - Path=/v3/api-docs/certificate-service
+          filters:
+            - SetPath=/v3/api-docs
+        - id: docs-document-service
+          uri: ${DOCUMENT_SERVICE_URL:http://localhost:7006}
+          predicates:
+            - Path=/v3/api-docs/document-service
+          filters:
+            - SetPath=/v3/api-docs
+        - id: docs-notification-service
+          uri: ${NOTIFICATION_SERVICE_URL:http://localhost:7007}
+          predicates:
+            - Path=/v3/api-docs/notification-service
+          filters:
+            - SetPath=/v3/api-docs
+        - id: docs-user-service
+          uri: ${USER_SERVICE_URL:http://localhost:7008}
+          predicates:
+            - Path=/v3/api-docs/user-service
+          filters:
+            - SetPath=/v3/api-docs
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,gateway
+
+keycloak:
+  base-url: http://localhost:8180
+  realm: whodas-realm
+  issuer-uri: http://localhost:8180/realms/whodas-realm
+  client-id: whodas20-client
+  client-secret: "whodas20-client-key"
+  scope: "openid profile email"
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    urls:
+      - name: Gateway (auth)
+        url: /v3/api-docs
+      - name: Patient Service
+        url: /v3/api-docs/patient-service
+      - name: Questionnaire Service
+        url: /v3/api-docs/questionnaire-service
+      - name: Assessment Service
+        url: /v3/api-docs/assessment-service
+      - name: Certificate Service
+        url: /v3/api-docs/certificate-service
+      - name: Document Service
+        url: /v3/api-docs/document-service
+      - name: Notification Service
+        url: /v3/api-docs/notification-service
+      - name: User Service
+        url: /v3/api-docs/user-service
+
+logging:
+  file:
+    name: ${LOG_PATH:../logs}/${spring.application.name}.log
+  logback:
+    rollingpolicy:
+      max-file-size: 20MB
+      max-history: 14
+      total-size-cap: 300MB
+  pattern:
+    file: "%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] %logger{36} - %msg%n"
+  level:
+    it.whodas.gateway: DEBUG
+    org.springframework.cloud.gateway: DEBUG
+    org.springframework.security: DEBUG

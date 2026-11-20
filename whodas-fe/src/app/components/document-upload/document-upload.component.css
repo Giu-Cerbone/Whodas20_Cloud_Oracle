@@ -1,0 +1,44 @@
+.drop-zone {
+  border: 2px dashed #adb5bd;
+  border-radius: 0.75rem;
+  background-color: #f8f9fa;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+  cursor: pointer;
+}
+
+.drop-zone.drag-over {
+  border-color: #0d6efd;
+  background-color: #e7f1ff;
+}
+
+.drop-zone.has-file {
+  border-color: #198754;
+  background-color: #f1fbf5;
+  cursor: default;
+}
+
+.drop-zone-icon {
+  font-size: 2.5rem;
+  color: #adb5bd;
+}
+
+.drop-zone.has-file .drop-zone-icon {
+  color: #198754;
+}
+
+.result-card {
+  border-left: 4px solid #0d6efd;
+}
+
+tr.item-warning {
+  background-color: #fff3cd;
+}
+
+.confidence-low {
+  color: #b02a37;
+  font-weight: 600;
+}
+
+.spinner-border-sm {
+  vertical-align: -0.15em;
+}

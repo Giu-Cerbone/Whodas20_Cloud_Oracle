@@ -1,0 +1,144 @@
+{
+  "realm": "whodas-realm",
+  "enabled": true,
+  "displayName": "WHODAS 2.0",
+  "sslRequired": "external",
+  "accessTokenLifespan": 3600,
+  "ssoSessionIdleTimeout": 1800,
+  "ssoSessionMaxLifespan": 36000,
+  "registrationAllowed": true,
+  "loginWithEmailAllowed": true,
+  "duplicateEmailsAllowed": false,
+  "resetPasswordAllowed": true,
+  "editUsernameAllowed": false,
+
+  "roles": {
+    "realm": [
+      {
+        "name": "user",
+        "description": "WHODAS 2.0 - ruolo utente standard"
+      }
+    ]
+  },
+
+  "whodasSetup": {
+    "_comment": "Sezione NON inviata a Keycloak: setup-keycloak.js la rimuove prima di POST /admin/realms (un campo sconosciuto fa fallire l'import con 'unable to read contents from stream'). Viene usata dallo script per creare i client scope con i protocol mapper, perche' un blocco 'clientScopes' nell'import sostituisce gli scope built-in del realm (acr, basic, email, profile, roles, web-origins).",
+    "clientScopes": [
+      {
+        "name": "whodas-audience",
+        "description": "Aggiunge whodas20-client all'audience del token: senza questo mapper l'introspezione del token da parte del gateway restituisce active=false",
+        "protocol": "openid-connect",
+        "attributes": {
+          "include.in.token.scope": "true",
+          "display.on.consent.screen": "false"
+        },
+        "protocolMappers": [
+          {
+            "name": "whodas20-client-audience",
+            "protocol": "openid-connect",
+            "protocolMapper": "oidc-audience-mapper",
+            "consentRequired": false,
+            "config": {
+              "included.client.audience": "whodas20-client",
+              "access.token.claim": "true",
+              "id.token.claim": "false",
+              "introspection.token.claim": "true"
+            }
+          }
+        ]
+      }
+    ],
+    "ldapSetup": {
+      "provider": {
+        "connectionUrl": "ldap://ldap:389",
+        "baseDn": "dc=whodascompany,dc=local",
+        "bindDn": "cn=admin,dc=whodascompany,dc=local",
+        "bindCredential": "admin",
+        "usersDn": "ou=users,dc=whodascompany,dc=local",
+        "userObjectClasses": [],
+        "usernameLDAPAttribute": "uid",
+        "rdnLDAPAttribute": "uid",
+        "uuidLDAPAttribute": "entryUUID",
+        "userModelAttribute": "username",
+        "searchScope": "1",
+        "pagination": "true",
+        "batchSizeForSync": "1000",
+        "fullSyncPeriod": "-1",
+        "changedSyncPeriod": "-1",
+        "priority": "0",
+        "importEnabled": "true",
+        "editMode": "READ_ONLY"
+      }
+    }
+  },
+
+  "clients": [
+    {
+      "clientId": "whodas20-client",
+      "name": "WHODAS 2.0 Backend",
+      "description": "Client applicativo WHODAS 2.0 (Angular + Spring Boot gateway)",
+      "enabled": true,
+      "protocol": "openid-connect",
+      "clientAuthenticatorType": "client-secret",
+      "secret": "whodas20-client-key",
+      "publicClient": false,
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": true,
+      "serviceAccountsEnabled": true,
+      "rootUrl": "http://localhost:4200",
+      "baseUrl": "/",
+      "redirectUris": [
+        "http://localhost:4200/*",
+        "http://localhost:4200/"
+      ],
+      "webOrigins": [
+        "http://localhost:4200"
+      ],
+      "attributes": {
+        "access.token.lifespan": "3600",
+        "refresh.token.lifespan": "86400",
+        "post.logout.redirect.uris": "http://localhost:4200/*"
+      }
+    }
+  ],
+
+  "users": [
+    {
+      "username": "testuser",
+      "email": "testuser@whodas.com",
+      "emailVerified": true,
+      "enabled": true,
+      "firstName": "Test",
+      "lastName": "User",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "test123",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "user"
+      ]
+    },
+    {
+      "username": "whodas_user",
+      "email": "whodas_user@prava.lin",
+      "emailVerified": true,
+      "enabled": true,
+      "firstName": "Whodas",
+      "lastName": "User",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "whodas_user",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "user"
+      ]
+    }
+  ]
+}

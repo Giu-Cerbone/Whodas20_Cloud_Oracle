@@ -1,0 +1,41 @@
+.detail-card {
+  border-left: 4px solid #0d6efd;
+}
+
+tr.item-warning {
+  background-color: #fff3cd;
+}
+
+.confidence-low {
+  color: #b02a37;
+  font-weight: 600;
+}
+
+.pagination .page-link {
+  color: #0d6efd;
+  border-color: #dee2e6;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.8rem;
+}
+
+.pagination .page-item.active .page-link {
+  background-color: #0d6efd;
+  border-color: #0d6efd;
+  color: white;
+}
+
+.pagination .page-item.disabled .page-link {
+  color: #6c757d;
+  pointer-events: none;
+  background-color: white;
+  border-color: #dee2e6;
+}
+
+.btn-group-sm .btn {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.8rem;
+}
+
+.spinner-border-sm {
+  vertical-align: -0.15em;
+}

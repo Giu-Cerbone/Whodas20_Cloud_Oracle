@@ -1,0 +1,277 @@
+<div class="container-fluid py-4">
+  <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+    <h2 class="mb-0"><i class="fas fa-clipboard-list me-2 text-primary"></i>Questionario WHODAS 2.0</h2>
+  </div>
+
+  <!-- Tipo compilazione selector -->
+  <div *ngIf="showTypeSelector" class="card shadow-lg border-0" style="max-width: 900px; margin: 0 auto;">
+    <div class="card-header bg-gradient-primary text-white py-3">
+      <div class="d-flex align-items-center justify-content-between">
+        <h5 class="mb-0"><i class="fas fa-user-check me-2"></i>Tipo di Compilazione</h5>
+        <span class="badge bg-warning text-dark"><i class="fas fa-exclamation-triangle me-1"></i>Obbligatorio</span>
+      </div>
+    </div>
+    <div class="card-body p-4">
+      <div class="alert alert-info mb-4">
+        <i class="fas fa-info-circle me-2"></i>
+        Seleziona la modalità con cui verrà compilato il questionario per <strong>{{ selectedPatient?.firstName }} {{ selectedPatient?.lastName }}</strong>.
+        La scelta è obbligatoria per poter proseguire.
+      </div>
+
+      <div class="row g-4">
+        <div *ngFor="let type of typeCompileQuests" class="col-lg-4">
+          <div class="card h-100 cursor-pointer border-3 transition-all"
+               [class.border-primary]="selectedType?.id === type.id"
+               [class.border-secondary]="selectedType?.id !== type.id"
+               [class.shadow-lg]="selectedType?.id === type.id"
+               [class.bg-primary]="selectedType?.id === type.id"
+               [class.bg-white]="selectedType?.id !== type.id"
+               (click)="selectType(type)"
+               style="min-height: 320px;">
+            <div class="card-body text-center p-4 d-flex flex-column">
+              <div class="mb-3">
+                <div class="rounded-circle mx-auto d-flex align-items-center justify-content-center"
+                     style="width: 80px; height: 80px;"
+                     [class.bg-primary]="selectedType?.id === type.id"
+                     [class.bg-secondary]="selectedType?.id !== type.id">
+                  <i class="fas fa-user-check fa-3x" [class.text-white]="selectedType?.id === type.id || selectedType?.id !== type.id"></i>
+                </div>
+              </div>
+              <h6 class="mb-3 fw-bold" [class.text-white]="selectedType?.id === type.id">{{ type.descType }}</h6>
+              <p class="small mb-2" [class.text-white]="selectedType?.id === type.id" [class.text-muted]="selectedType?.id !== type.id">{{ type.specificDesc }}</p>
+              <div class="mt-auto">
+                <small class="d-block mb-1"><i class="fas fa-info-circle me-1"></i><strong>Note:</strong></small>
+                <small class="d-block" [class.text-white]="selectedType?.id === type.id" [class.text-muted]="selectedType?.id !== type.id">{{ type.additionalNotes }}</small>
+              </div>
+            </div>
+            <div class="card-footer text-center py-2 border-0" *ngIf="selectedType?.id === type.id" [class.bg-primary]="selectedType?.id === type.id">
+              <i class="fas fa-check-circle fa-2x text-white"></i>
+            </div>
+            <div class="card-footer text-center py-2 border-0" *ngIf="selectedType?.id !== type.id">
+              <i class="far fa-circle fa-2x text-muted"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="d-flex gap-2 justify-content-between mt-4">
+        <button class="btn btn-outline-secondary btn-lg" type="button" (click)="cancelTypeSelector()">
+          <i class="fas fa-arrow-left me-2"></i> Indietro
+        </button>
+        <button class="btn btn-primary btn-lg px-5" type="button" (click)="confirmStartAssessment()" [disabled]="!selectedType">
+          <i class="fas fa-play me-2"></i> Inizia Valutazione
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="showPatientSelector" class="card shadow-sm">
+    <div class="card-header bg-light">
+      <h5 class="mb-0"><i class="fas fa-user-search me-2"></i>Seleziona Paziente</h5>
+    </div>
+    <div class="card-body">
+      <!-- Search & Filters -->
+      <div class="row g-3 align-items-end mb-3">
+        <div class="col-md-4">
+          <label class="form-label small fw-bold">Nome</label>
+          <input type="text" class="form-control" placeholder="Cerca per nome..." [(ngModel)]="searchFirstName" (input)="onSearch()">
+        </div>
+        <div class="col-md-4">
+          <label class="form-label small fw-bold">Cognome</label>
+          <input type="text" class="form-control" placeholder="Cerca per cognome..." [(ngModel)]="searchLastName" (input)="onSearch()">
+        </div>
+        <div class="col-md-3">
+          <label class="form-label small fw-bold">Risultati per pagina</label>
+          <select class="form-select" [(ngModel)]="pageSize" (change)="onPageSizeChange()">
+            <option *ngFor="let size of pageSizeOptions" [value]="size">{{ size }}</option>
+          </select>
+        </div>
+        <div class="col-md-1">
+          <button class="btn btn-outline-secondary w-100" type="button" (click)="clearFilters()" title="Pulisci filtri">
+            <i class="fas fa-eraser"></i>
+          </button>
+        </div>
+      </div>
+
+      @if (isLoading) {
+        <div class="text-center py-4">
+          <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Caricamento...</span>
+          </div>
+          <p class="mt-2 text-muted">Caricamento pazienti...</p>
+        </div>
+      } @else {
+        <div class="table-responsive">
+          <table class="table table-hover mb-0 sortable-table">
+            <thead class="table-light">
+              <tr>
+                <th scope="col" (click)="onSort('firstName')" class="sortable">
+                  Nome <i class="fas" [class]="getSortIcon('firstName')"></i>
+                </th>
+                <th scope="col" (click)="onSort('lastName')" class="sortable">
+                  Cognome <i class="fas" [class]="getSortIcon('lastName')"></i>
+                </th>
+                <th scope="col" (click)="onSort('fiscalCode')" class="sortable">
+                  Codice Fiscale <i class="fas" [class]="getSortIcon('fiscalCode')"></i>
+                </th>
+                <th scope="col" (click)="onSort('birthDate')" class="sortable">
+                  Data Nascita <i class="fas" [class]="getSortIcon('birthDate')"></i>
+                </th>
+                <th scope="col" class="text-center">Azione</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (patient of paginatedPatients; track trackByPatientId($index, patient)) {
+                <tr>
+                  <td>{{ patient.firstName }}</td>
+                  <td>{{ patient.lastName }}</td>
+                  <td>{{ patient.fiscalCode || '-' }}</td>
+                  <td>{{ (patient.birthDate | date:'dd/MM/yyyy') || '-' }}</td>
+                  <td class="text-center">
+                    <button class="btn btn-sm btn-primary" type="button" (click)="onPatientSelect(patient)" aria-label="Seleziona paziente">
+                      <i class="fas fa-arrow-right me-1"></i> Seleziona
+                    </button>
+                  </td>
+                </tr>
+              } @empty {
+                <tr>
+                  <td colspan="5" class="text-center py-4 text-muted">
+                    <i class="fas fa-search fa-2x mb-2 d-block opacity-50"></i>
+                    Nessun paziente trovato
+                    <div class="mt-2">
+                      <a routerLink="/patients/new" class="btn btn-sm btn-outline-primary">Crea un nuovo paziente</a>
+                    </div>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Pagination -->
+        @if (totalPages > 1) {
+          <nav class="mt-3 pt-3 border-top" aria-label="Paginazione pazienti">
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+              <div class="small text-muted">
+                Mostrando {{ (currentPage - 1) * pageSize + 1 }} - {{ Math.min(currentPage * pageSize, totalItems) }} di {{ totalItems }} pazienti
+              </div>
+              <ul class="pagination pagination-sm mb-0">
+                <li class="page-item" [class.disabled]="currentPage === 1">
+                  <button class="page-link" type="button" (click)="onPageChange(1)" [disabled]="currentPage === 1" aria-label="Prima pagina">
+                    <i class="fas fa-angle-double-left"></i>
+                  </button>
+                </li>
+                <li class="page-item" [class.disabled]="currentPage === 1">
+                  <button class="page-link" type="button" (click)="onPageChange(currentPage - 1)" [disabled]="currentPage === 1" aria-label="Pagina precedente">
+                    <i class="fas fa-angle-left"></i>
+                  </button>
+                </li>
+                @for (page of pages; track page) {
+                  <li class="page-item" [class.active]="page === currentPage">
+                    <button class="page-link" type="button" (click)="onPageChange(page)">{{ page }}</button>
+                  </li>
+                }
+                <li class="page-item" [class.disabled]="currentPage === totalPages">
+                  <button class="page-link" type="button" (click)="onPageChange(currentPage + 1)" [disabled]="currentPage === totalPages" aria-label="Pagina successiva">
+                    <i class="fas fa-angle-right"></i>
+                  </button>
+                </li>
+                <li class="page-item" [class.disabled]="currentPage === totalPages">
+                  <button class="page-link" type="button" (click)="onPageChange(totalPages)" [disabled]="currentPage === totalPages" aria-label="Ultima pagina">
+                    <i class="fas fa-angle-double-right"></i>
+                  </button>
+                </li>
+              </ul>
+            </div>
+          </nav>
+        }
+      }
+    </div>
+  </div>
+
+  <div *ngIf="!showPatientSelector && selectedPatient" class="card shadow-sm">
+    <div class="card-header bg-light d-flex justify-content-between align-items-center">
+      <h5 class="mb-0">
+        <i class="fas fa-user-check me-2"></i>
+        Paziente: {{ selectedPatient.firstName }} {{ selectedPatient.lastName }}
+        @if (selectedPatient.fiscalCode) {
+          <span class="badge bg-secondary ms-2">{{ selectedPatient.fiscalCode }}</span>
+        }
+      </h5>
+      <button class="btn btn-outline-secondary btn-sm" type="button" (click)="onBackToSelection()">
+        <i class="fas fa-arrow-left me-1"></i> Cambia Paziente
+      </button>
+    </div>
+    <div class="card-body">
+      <!-- Existing Assessments Section -->
+      @if (patientAssessments.length > 0) {
+        <div class="mb-4">
+          <h5 class="mb-3"><i class="fas fa-history me-2 text-primary"></i>Valutazioni Esistenti</h5>
+          @if (isLoadingAssessments) {
+            <div class="text-center py-3">
+              <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Caricamento...</span>
+              </div>
+            </div>
+          } @else {
+            <div class="table-responsive">
+              <table class="table table-hover table-sm mb-0">
+                <thead class="table-light">
+                  <tr>
+                    <th scope="col">Data</th>
+                    <th scope="col">Stato</th>
+                    <th scope="col">Versione</th>
+                    <th scope="col">Punteggio Totale</th>
+                    <th scope="col">Disabilità %</th>
+                    <th scope="col" class="text-center">Azioni</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (assessment of patientAssessments; track trackByAssessmentId($index, assessment)) {
+                    <tr>
+                      <td>{{ formatDate(assessment.updatedAt) || formatDate(assessment.createdAt) }}</td>
+                      <td>
+                        <span class="badge" [class]="getStatusBadgeClass(assessment.status)">
+                          {{ assessment.status }}
+                        </span>
+                      </td>
+                      <td>{{ assessment.version }}</td>
+                      <td>{{ assessment.totalScore !== null && assessment.totalScore !== undefined ? (assessment.totalScore | ceilValue) : '-' }}</td>
+                      <td>{{ assessment.overallPercentDisability !== null && assessment.overallPercentDisability !== undefined ? (assessment.overallPercentDisability | ceilValue) + '%' : '-' }}</td>
+                      <td class="text-center">
+                        <div class="btn-group btn-group-sm" role="group">
+                          <button class="btn btn-outline-primary" type="button" (click)="onViewPdf(assessment)" title="Visualizza e Stampa PDF">
+                            <i class="fas fa-eye me-1"></i> Visualizza
+                          </button>
+                          <button class="btn btn-outline-success" type="button" (click)="onDownloadPdf(assessment)" title="Scarica PDF">
+                            <i class="fas fa-download me-1"></i> Scarica
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          }
+        </div>
+        <hr class="my-4">
+      } @else if (!isLoadingAssessments) {
+        <div class="alert alert-info mb-4">
+          <i class="fas fa-info-circle me-2"></i>
+          Nessuna valutazione trovata per questo paziente.
+        </div>
+      }
+
+      <!-- New Assessment Section -->
+      <div class="text-center py-5">
+        <i class="fas fa-clipboard-question fa-4x text-primary mb-3"></i>
+        <h4>Questionario WHODAS 2.0</h4>
+        <p class="text-muted mb-4">Avvia una nuova valutazione per questo paziente</p>
+        <button class="btn btn-primary btn-lg" type="button" (click)="onStartAssessment()">
+          <i class="fas fa-play me-2"></i> Inizia Valutazione
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,2 @@
+2026-11-20 08:44:40.393 DEBUG [http-nio-7006-exec-5] i.w.d.s.pdf.WhodasTemplatePdfService - Modello WHODAS 2.0 generato: 87302 byte
+2026-11-20 08:44:40.401 DEBUG [http-nio-7006-exec-5] i.w.d.r.DocumentTemplateController - Modello generato: null byte, disposition attachment

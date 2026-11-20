@@ -1,0 +1,35 @@
+2026-11-20 02:19:33.769 INFO  [http-nio-7008-exec-3] o.a.coyote.http11.Http11Processor - Error parsing HTTP request header
+ Note: further occurrences of HTTP request parsing errors will be logged at DEBUG level.
+java.lang.IllegalArgumentException: Invalid character found in method name [0x160x030x010x00{0x010x000x00w0x030x03#0xdeT>eJ0xcc0xce0x170x09>0x94FveW0xa1b0xca0x110x8aLO[%`0xbc0xdb%*0xf60xb50x000x000x1a0xc0/0xc0+0xc00x110xc00x070xc00x130xc00x090xc00x140xc00x0a0x000x050x00/0x0050xc00x120x000x0a0x010x000x0040x000x050x000x050x010x000x000x000x000x000x0a0x000x080x000x060x000x170x000x180x000x190x000x0b0x000x020x010x000x000x0d0x000x100x000x0e0x040x010x040x030x020x010x020x030x040x010x050x010x060x010xff0x010x000x010x00...]. HTTP method names must be tokens
+	at org.apache.coyote.http11.Http11InputBuffer.parseRequestLine(Http11InputBuffer.java:406)
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:270)
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63)
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:905)
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1741)
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1190)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:659)
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:63)
+	at java.base/java.lang.Thread.run(Unknown Source)
+2026-11-20 08:43:53.881 DEBUG [http-nio-7008-exec-7] org.hibernate.SQL - 
+    select
+        ru1_0.id,
+        ru1_0.address,
+        ru1_0.birth_date,
+        ru1_0.city,
+        ru1_0.comune,
+        ru1_0.email,
+        ru1_0.first_name,
+        ru1_0.fiscal_code,
+        ru1_0.keycloak_user_id,
+        ru1_0.last_name,
+        ru1_0.ldap_uid,
+        ru1_0.modified_at,
+        ru1_0.password_hash,
+        ru1_0.phone,
+        ru1_0.postal_code,
+        ru1_0.registered_at,
+        ru1_0.status,
+        ru1_0.username 
+    from
+        registered_users ru1_0

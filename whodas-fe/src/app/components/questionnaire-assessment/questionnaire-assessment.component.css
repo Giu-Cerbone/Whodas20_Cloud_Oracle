@@ -1,0 +1,176 @@
+/* Questionnaire Assessment Component Styles */
+
+/* Type Selector */
+.bg-gradient-primary {
+  background: linear-gradient(135deg, #0d6efd 0%, #0b5ed7 100%);
+}
+
+.transition-all {
+  transition: all 0.2s ease;
+}
+
+.border-3 {
+  border-width: 3px !important;
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+/* Hover effect on type cards */
+.card[type="type-card"]:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+}
+
+.card[type="type-card"] {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Sortable table */
+.sortable-table th.sortable {
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.15s ease;
+  white-space: nowrap;
+}
+
+.sortable-table th.sortable:hover {
+  background-color: #b6d4fe !important;
+}
+
+.sortable-table th.sortable.sorted {
+  background-color: #9ec5fe !important;
+  color: #0d6efd;
+}
+
+.sortable-table th.sortable i.fa-sort {
+  color: #6ea8fe;
+  margin-left: 0.25rem;
+  font-size: 0.75rem;
+  opacity: 0.8;
+}
+
+.sortable-table th.sortable.sorted i.fa-sort-up,
+.sortable-table th.sortable.sorted i.fa-sort-down {
+  color: #0d6efd;
+  opacity: 1;
+}
+
+.sortable-table th.sortable:not(.sorted) i.fa-sort-up,
+.sortable-table th.sortable:not(.sorted) i.fa-sort-down {
+  display: none;
+}
+
+.table td, .table th {
+  vertical-align: middle;
+}
+
+.pagination .page-link {
+  color: #0d6efd;
+  border-color: #dee2e6;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.8rem;
+}
+
+.pagination .page-link:hover {
+  background-color: #e9ecef;
+  border-color: #dee2e6;
+  color: #0a58ca;
+}
+
+.pagination .page-item.active .page-link {
+  background-color: #0d6efd;
+  border-color: #0d6efd;
+  color: white;
+}
+
+.pagination .page-item.disabled .page-link {
+  color: #6c757d;
+  pointer-events: none;
+  background-color: white;
+  border-color: #dee2e6;
+}
+
+.card {
+  border-radius: 0.75rem;
+  border: none;
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+
+.card-header {
+  border-radius: 0.75rem 0.75rem 0 0 !important;
+}
+
+.form-label {
+  font-size: 0.75rem;
+  color: #6c757d;
+}
+
+.form-control, .form-select {
+  font-size: 0.875rem;
+}
+
+.btn-primary {
+  font-weight: 500;
+}
+
+@media (max-width: 768px) {
+  .pagination {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
+  .pagination .page-link {
+    padding: 0.2rem 0.4rem;
+    font-size: 0.75rem;
+  }
+}
+
+/* Loading spinner */
+.spinner-border {
+  width: 2rem;
+  height: 2rem;
+}
+
+/* Print styles */
+@media print {
+  .card-header,
+  .btn,
+  .pagination,
+  .form-control,
+  .form-select {
+    display: none !important;
+  }
+  
+  .card {
+    box-shadow: none !important;
+    border: 1px solid #dee2e6 !important;
+  }
+  
+  .table {
+    font-size: 0.75rem;
+  }
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+  .sortable-table th.sortable.sorted {
+    background-color: #000 !important;
+    color: #fff !important;
+  }
+  
+  .pagination .page-item.active .page-link {
+    background-color: #000 !important;
+    border-color: #000 !important;
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .sortable-table th.sortable,
+  .pagination .page-link,
+  .btn {
+    transition: none !important;
+  }
+}

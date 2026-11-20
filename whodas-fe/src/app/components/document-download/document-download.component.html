@@ -1,0 +1,157 @@
+<div class="container-fluid py-4">
+  <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+    <h2 class="mb-0"><i class="fas fa-file-pdf me-2 text-primary"></i>Scarica modello WHODAS 2.0</h2>
+    <a class="btn btn-outline-secondary" routerLink="/documents">
+      <i class="fas fa-arrow-left me-2"></i> Importa documento
+    </a>
+  </div>
+
+  <form [formGroup]="downloadForm">
+    <!-- Modello e dati di compilazione -->
+    <div class="card shadow-sm mb-4">
+      <div class="card-header bg-light">
+        <h5 class="mb-0"><i class="fas fa-file-lines me-2"></i>Modello e dati di compilazione</h5>
+      </div>
+      <div class="card-body">
+        @if (isLoading) {
+          <div class="text-center py-3">
+            <div class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">Caricamento...</span>
+            </div>
+            <p class="mt-2 text-muted mb-0">Caricamento modelli...</p>
+          </div>
+        } @else {
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label">Modello *</label>
+              <select class="form-select" formControlName="templateCode"
+                      [class.is-invalid]="downloadForm.get('templateCode')?.invalid && downloadForm.get('templateCode')?.touched">
+                <option [ngValue]="null">Seleziona...</option>
+                @for (template of templates; track template.code) {
+                  <option [ngValue]="template.code">{{ template.label }} ({{ template.itemCount }} item)</option>
+                }
+              </select>
+              <div class="invalid-feedback">Seleziona un modello</div>
+              @if (selectedTemplate?.description) {
+                <small class="text-muted">{{ selectedTemplate?.description }}</small>
+              }
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Tipo di compilazione</label>
+              <select class="form-select" formControlName="compileTypeId">
+                <option [ngValue]="null">Non specificato</option>
+                @for (type of typeCompileQuests; track $index) {
+                  <option [ngValue]="type.id">{{ type.descType }}</option>
+                }
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Intervistatore</label>
+              <input type="text" class="form-control" formControlName="interviewer" maxlength="120"
+                     placeholder="Nome dell'intervistatore...">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Data della valutazione</label>
+              <input type="date" class="form-control" formControlName="assessmentDate">
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- Paziente -->
+    <div class="card shadow-sm mb-4">
+      <div class="card-header bg-light">
+        <h5 class="mb-0"><i class="fas fa-user-search me-2"></i>Paziente (facoltativo)</h5>
+      </div>
+      <div class="card-body">
+        @if (selectedPatient) {
+          <div class="d-flex justify-content-between align-items-center patient-chip">
+            <div>
+              <i class="fas fa-user-check text-success me-2"></i>
+              <strong>{{ selectedPatient.firstName }} {{ selectedPatient.lastName }}</strong>
+              @if (selectedPatient.fiscalCode) {
+                <span class="badge bg-secondary ms-2">{{ selectedPatient.fiscalCode }}</span>
+              }
+            </div>
+            <button class="btn btn-outline-secondary btn-sm" type="button" (click)="onClearPatient()">
+              <i class="fas fa-xmark me-1"></i> Cambia
+            </button>
+          </div>
+        } @else {
+          <div class="row g-3 align-items-end">
+            <div class="col-md-9">
+              <label class="form-label">Cerca per cognome o codice fiscale</label>
+              <input type="text" class="form-control" formControlName="searchTerm"
+                     placeholder="Es. Rossi oppure RSSMRA80A01H501U"
+                     (input)="onSearchPatients()">
+            </div>
+            <div class="col-md-3">
+              <button class="btn btn-outline-primary w-100" type="button" (click)="onSearchPatients()" [disabled]="isSearching">
+                @if (isSearching) {
+                  <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+                } @else {
+                  <i class="fas fa-search me-2"></i>
+                }
+                Cerca
+              </button>
+            </div>
+          </div>
+          @if (patients.length > 0) {
+            <div class="list-group mt-3 patient-result-list">
+              @for (patient of patients; track patient.id) {
+                <button class="list-group-item list-group-item-action patient-result" type="button" (click)="onPatientSelect(patient)">
+                  <strong>{{ patient.firstName }} {{ patient.lastName }}</strong>
+                  <span class="text-muted ms-2">{{ patient.fiscalCode || 'Codice fiscale non disponibile' }}</span>
+                </button>
+              }
+            </div>
+          }
+        }
+      </div>
+    </div>
+
+    <!-- Riepilogo -->
+    @if (selectedTemplate) {
+      <div class="card shadow-sm mb-4 summary-card">
+        <div class="card-body">
+          <h6 class="text-uppercase text-muted summary-title">Riepilogo</h6>
+          <div class="row g-2 small">
+            <div class="col-md-6"><i class="fas fa-file-lines me-2 text-primary"></i>{{ selectedTemplate.label }}</div>
+            <div class="col-md-6"><i class="fas fa-hashtag me-2 text-primary"></i>{{ selectedTemplate.itemCount }} item &middot; lingua {{ selectedTemplate.language || 'it' }}</div>
+            <div class="col-md-6">
+              <i class="fas fa-user me-2 text-primary"></i>
+              {{ selectedPatient ? selectedPatient.firstName + ' ' + selectedPatient.lastName : 'Nessun paziente selezionato' }}
+            </div>
+            <div class="col-md-6">
+              <i class="fas fa-clipboard-list me-2 text-primary"></i>
+              {{ selectedCompileType ? selectedCompileType.descType : 'Tipo non specificato' }}
+            </div>
+            <div class="col-md-6"><i class="fas fa-user-tie me-2 text-primary"></i>{{ downloadForm.get('interviewer')?.value || 'Intervistatore non specificato' }}</div>
+            <div class="col-md-6"><i class="fas fa-calendar me-2 text-primary"></i>{{ (assessmentDate | date:'dd/MM/yyyy') || 'Data non specificata' }}</div>
+          </div>
+          <div class="small text-muted mt-3"><i class="fas fa-file me-2"></i>File generato: {{ filename }}</div>
+        </div>
+      </div>
+    }
+  </form>
+
+  <div class="d-flex justify-content-end gap-2 mb-4">
+    <button class="btn btn-outline-primary" type="button" (click)="onPreview()" [disabled]="isPreviewing || !selectedTemplate">
+      @if (isPreviewing) {
+        <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+      } @else {
+        <i class="fas fa-print me-2"></i>
+      }
+      Anteprima / Stampa
+    </button>
+    <button class="btn btn-primary" type="button" (click)="onDownload()" [disabled]="isDownloading || !selectedTemplate">
+      @if (isDownloading) {
+        <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+      } @else {
+        <i class="fas fa-download me-2"></i>
+      }
+      Scarica PDF
+    </button>
+  </div>
+</div>

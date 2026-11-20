@@ -1,0 +1,15 @@
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: whodas-fe-standalone
+    ports:
+      - "80:80"
+    networks:
+      - whodas-be_default
+    restart: unless-stopped
+
+networks:
+  whodas-be_default:
+    external: true

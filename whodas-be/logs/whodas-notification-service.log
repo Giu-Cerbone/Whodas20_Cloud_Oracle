@@ -1,0 +1,286 @@
+2026-11-20 08:43:41.766 INFO  [http-nio-7007-exec-2] i.w.n.rest.NotificationController - SSE connection registered for user: testuser
+2026-11-20 08:43:41.774 INFO  [http-nio-7007-exec-2] i.w.n.service.SseEmitterRegistry - SSE emitter registered for user: testuser (total connected: 4)
+2026-11-20 08:43:41.778 DEBUG [http-nio-7007-exec-2] org.hibernate.SQL - 
+    select
+        n1_0.id,
+        n1_0.created_at,
+        n1_0.data_elimina,
+        n1_0.data_lettura,
+        n1_0.data_spedizione,
+        n1_0.description,
+        n1_0.oggetto,
+        n1_0.stato,
+        n1_0.tipo_obj,
+        n1_0.type_message,
+        n1_0.updated_at,
+        n1_0.user_id,
+        n1_0.username 
+    from
+        notifications n1_0 
+    where
+        n1_0.username=? 
+        and n1_0.data_lettura is null 
+        and n1_0.data_elimina is null 
+    order by
+        n1_0.data_spedizione desc
+2026-11-20 08:43:42.409 INFO  [http-nio-7007-exec-7] i.w.n.rest.NotificationController - POST /api/v1/notifications - creating notification for username=testuser
+2026-11-20 08:43:42.411 DEBUG [http-nio-7007-exec-7] org.hibernate.SQL - 
+    select
+        nextval('notification_seq')
+2026-11-20 08:43:42.413 INFO  [http-nio-7007-exec-7] i.w.n.service.NotificationService - Notifica creata: id=22 username=testuser oggetto=Informazioni caricate stato=SPEDITO
+2026-11-20 08:43:42.413 DEBUG [http-nio-7007-exec-7] i.w.n.service.SseEmitterRegistry - Pushing notification to 2 emitter(s) for user: testuser
+2026-11-20 08:43:42.414 WARN  [http-nio-7007-exec-7] i.w.n.service.SseEmitterRegistry - Failed to send SSE to user testuser: ServletOutputStream failed to flush: java.io.IOException: Broken pipe
+2026-11-20 08:43:42.414 WARN  [http-nio-7007-exec-4] i.w.n.service.SseEmitterRegistry - SSE emitter error for user testuser: Broken pipe
+2026-11-20 08:43:42.416 DEBUG [http-nio-7007-exec-7] org.hibernate.SQL - 
+    insert 
+    into
+        notifications
+        (created_at, data_elimina, data_lettura, data_spedizione, description, oggetto, stato, tipo_obj, type_message, updated_at, user_id, username, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+2026-11-20 08:43:42.416 DEBUG [http-nio-7007-exec-4] i.w.n.service.SseEmitterRegistry - SSE emitter completed for user: testuser
+2026-11-20 08:43:59.258 DEBUG [http-nio-7007-exec-10] org.hibernate.SQL - 
+    select
+        n1_0.id,
+        n1_0.created_at,
+        n1_0.data_elimina,
+        n1_0.data_lettura,
+        n1_0.data_spedizione,
+        n1_0.description,
+        n1_0.oggetto,
+        n1_0.stato,
+        n1_0.tipo_obj,
+        n1_0.type_message,
+        n1_0.updated_at,
+        n1_0.user_id,
+        n1_0.username 
+    from
+        notifications n1_0 
+    where
+        n1_0.username=? 
+        and n1_0.data_lettura is null 
+        and n1_0.data_elimina is null 
+    order by
+        n1_0.data_spedizione desc
+2026-11-20 08:44:01.992 DEBUG [http-nio-7007-exec-8] org.hibernate.SQL - 
+    update
+        notifications n1_0 
+    set
+        data_elimina=?,
+        stato='CANCELLATO',
+        updated_at=? 
+    where
+        n1_0.id=? 
+        and n1_0.username=? 
+        and n1_0.data_elimina is null
+2026-11-20 08:44:01.994 INFO  [http-nio-7007-exec-8] i.w.n.service.NotificationService - Notifica eliminata logicamente: id=22 username=testuser
+2026-11-20 08:44:01.995 DEBUG [http-nio-7007-exec-8] org.hibernate.SQL - 
+    select
+        n1_0.id,
+        n1_0.created_at,
+        n1_0.data_elimina,
+        n1_0.data_lettura,
+        n1_0.data_spedizione,
+        n1_0.description,
+        n1_0.oggetto,
+        n1_0.stato,
+        n1_0.tipo_obj,
+        n1_0.type_message,
+        n1_0.updated_at,
+        n1_0.user_id,
+        n1_0.username 
+    from
+        notifications n1_0 
+    where
+        n1_0.id=?
+2026-11-20 08:44:21.781 DEBUG [http-nio-7007-exec-6] org.hibernate.SQL - 
+    select
+        n1_0.id,
+        n1_0.created_at,
+        n1_0.data_elimina,
+        n1_0.data_lettura,
+        n1_0.data_spedizione,
+        n1_0.description,
+        n1_0.oggetto,
+        n1_0.stato,
+        n1_0.tipo_obj,
+        n1_0.type_message,
+        n1_0.updated_at,
+        n1_0.user_id,
+        n1_0.username 
+    from
+        notifications n1_0 
+    where
+        n1_0.username=? 
+        and n1_0.data_lettura is null 
+        and n1_0.data_elimina is null 
+    order by
+        n1_0.data_spedizione desc
+2026-11-20 08:44:23.197 DEBUG [http-nio-7007-exec-5] org.hibernate.SQL - 
+    update
+        notifications n1_0 
+    set
+        data_elimina=?,
+        stato='CANCELLATO',
+        updated_at=? 
+    where
+        n1_0.id=? 
+        and n1_0.username=? 
+        and n1_0.data_elimina is null
+2026-11-20 08:44:23.198 INFO  [http-nio-7007-exec-5] i.w.n.service.NotificationService - Notifica eliminata logicamente: id=15 username=testuser
+2026-11-20 08:44:23.199 DEBUG [http-nio-7007-exec-5] org.hibernate.SQL - 
+    select
+        n1_0.id,
+        n1_0.created_at,
+        n1_0.data_elimina,
+        n1_0.data_lettura,
+        n1_0.data_spedizione,
+        n1_0.description,
+        n1_0.oggetto,
+        n1_0.stato,
+        n1_0.tipo_obj,
+        n1_0.type_message,
+        n1_0.updated_at,
+        n1_0.user_id,
+        n1_0.username 
+    from
+        notifications n1_0 
+    where
+        n1_0.id=?
+2026-11-20 08:44:23.984 DEBUG [http-nio-7007-exec-1] org.hibernate.SQL - 
+    update
+        notifications n1_0 
+    set
+        data_elimina=?,
+        stato='CANCELLATO',
+        updated_at=? 
+    where
+        n1_0.id=? 
+        and n1_0.username=? 
+        and n1_0.data_elimina is null
+2026-11-20 08:44:23.985 INFO  [http-nio-7007-exec-1] i.w.n.service.NotificationService - Notifica eliminata logicamente: id=14 username=testuser
+2026-11-20 08:44:23.986 DEBUG [http-nio-7007-exec-1] org.hibernate.SQL - 
+    select
+        n1_0.id,
+        n1_0.created_at,
+        n1_0.data_elimina,
+        n1_0.data_lettura,
+        n1_0.data_spedizione,
+        n1_0.description,
+        n1_0.oggetto,
+        n1_0.stato,
+        n1_0.tipo_obj,
+        n1_0.type_message,
+        n1_0.updated_at,
+        n1_0.user_id,
+        n1_0.username 
+    from
+        notifications n1_0 
+    where
+        n1_0.id=?
+2026-11-20 08:44:24.547 DEBUG [http-nio-7007-exec-3] org.hibernate.SQL - 
+    update
+        notifications n1_0 
+    set
+        data_elimina=?,
+        stato='CANCELLATO',
+        updated_at=? 
+    where
+        n1_0.id=? 
+        and n1_0.username=? 
+        and n1_0.data_elimina is null
+2026-11-20 08:44:24.548 INFO  [http-nio-7007-exec-3] i.w.n.service.NotificationService - Notifica eliminata logicamente: id=13 username=testuser
+2026-11-20 08:44:24.549 DEBUG [http-nio-7007-exec-3] org.hibernate.SQL - 
+    select
+        n1_0.id,
+        n1_0.created_at,
+        n1_0.data_elimina,
+        n1_0.data_lettura,
+        n1_0.data_spedizione,
+        n1_0.description,
+        n1_0.oggetto,
+        n1_0.stato,
+        n1_0.tipo_obj,
+        n1_0.type_message,
+        n1_0.updated_at,
+        n1_0.user_id,
+        n1_0.username 
+    from
+        notifications n1_0 
+    where
+        n1_0.id=?
+2026-11-20 08:44:25.031 DEBUG [http-nio-7007-exec-2] org.hibernate.SQL - 
+    update
+        notifications n1_0 
+    set
+        data_elimina=?,
+        stato='CANCELLATO',
+        updated_at=? 
+    where
+        n1_0.id=? 
+        and n1_0.username=? 
+        and n1_0.data_elimina is null
+2026-11-20 08:44:25.033 INFO  [http-nio-7007-exec-2] i.w.n.service.NotificationService - Notifica eliminata logicamente: id=12 username=testuser
+2026-11-20 08:44:25.034 DEBUG [http-nio-7007-exec-2] org.hibernate.SQL - 
+    select
+        n1_0.id,
+        n1_0.created_at,
+        n1_0.data_elimina,
+        n1_0.data_lettura,
+        n1_0.data_spedizione,
+        n1_0.description,
+        n1_0.oggetto,
+        n1_0.stato,
+        n1_0.tipo_obj,
+        n1_0.type_message,
+        n1_0.updated_at,
+        n1_0.user_id,
+        n1_0.username 
+    from
+        notifications n1_0 
+    where
+        n1_0.id=?
+2026-11-20 08:44:25.777 DEBUG [http-nio-7007-exec-4] org.hibernate.SQL - 
+    update
+        notifications n1_0 
+    set
+        data_elimina=?,
+        stato='CANCELLATO',
+        updated_at=? 
+    where
+        n1_0.id=? 
+        and n1_0.username=? 
+        and n1_0.data_elimina is null
+2026-11-20 08:44:25.779 INFO  [http-nio-7007-exec-4] i.w.n.service.NotificationService - Notifica eliminata logicamente: id=11 username=testuser
+2026-11-20 08:44:25.780 DEBUG [http-nio-7007-exec-4] org.hibernate.SQL - 
+    select
+        n1_0.id,
+        n1_0.created_at,
+        n1_0.data_elimina,
+        n1_0.data_lettura,
+        n1_0.data_spedizione,
+        n1_0.description,
+        n1_0.oggetto,
+        n1_0.stato,
+        n1_0.tipo_obj,
+        n1_0.type_message,
+        n1_0.updated_at,
+        n1_0.user_id,
+        n1_0.username 
+    from
+        notifications n1_0 
+    where
+        n1_0.id=?
+2026-11-20 08:44:48.495 INFO  [http-nio-7007-exec-7] i.w.n.rest.NotificationController - POST /api/v1/notifications - creating notification for username=testuser
+2026-11-20 08:44:48.497 DEBUG [http-nio-7007-exec-7] org.hibernate.SQL - 
+    select
+        nextval('notification_seq')
+2026-11-20 08:44:48.498 INFO  [http-nio-7007-exec-7] i.w.n.service.NotificationService - Notifica creata: id=23 username=testuser oggetto=Informazioni caricate stato=SPEDITO
+2026-11-20 08:44:48.498 DEBUG [http-nio-7007-exec-7] i.w.n.service.SseEmitterRegistry - Pushing notification to 1 emitter(s) for user: testuser
+2026-11-20 08:44:48.500 DEBUG [http-nio-7007-exec-7] org.hibernate.SQL - 
+    insert 
+    into
+        notifications
+        (created_at, data_elimina, data_lettura, data_spedizione, description, oggetto, stato, tipo_obj, type_message, updated_at, user_id, username, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)

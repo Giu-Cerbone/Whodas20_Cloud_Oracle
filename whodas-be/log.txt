@@ -1,0 +1,53 @@
+WHODAS backend startup
+Project: D:\Progetti\Whodas2.0Project\whodas-be\
+Java: C:\Program Files\Java\jdk-24\bin\java.exe
+Database: jdbc:postgresql://localhost:5432/whodas
+Database user: postgres
+Backend services started
+Patient: http://localhost:7002
+Questionnaire: http://localhost:7003
+Assessment: http://localhost:7004
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v3.4.2)
+
+Certificate: http://localhost:7005
+Document: http://localhost:7006
+2026-10-08T20:23:34.554+02:00  INFO 18316 --- [whodas-notification-service] [           main] w.n.WhodasNotificationServiceApplication : Starting WhodasNotificationServiceApplication using Java 24 with PID 18316 (D:\Progetti\Whodas2.0Project\whodas-be\whodas-notification-service\target\whodas-notification-service-1.0.0.jar started by Peppino in D:\Progetti\Whodas2.0Project\whodas-be\whodas-notification-service)
+2026-10-08T20:23:34.589+02:00 DEBUG 18316 --- [whodas-notification-service] [           main] w.n.WhodasNotificationServiceApplication : Running with Spring Boot v3.4.2, Spring v6.2.2
+2026-10-08T20:23:34.591+02:00  INFO 18316 --- [whodas-notification-service] [           main] w.n.WhodasNotificationServiceApplication : No active profile set, falling back to 1 default profile: "default"
+Notification: http://localhost:7007
+Gateway: http://localhost:7001
+2026-10-08T20:23:49.658+02:00  INFO 18316 --- [whodas-notification-service] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-10-08T20:23:50.081+02:00  INFO 18316 --- [whodas-notification-service] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 345 ms. Found 1 JPA repository interface.
+2026-10-08T20:24:02.283+02:00  INFO 18316 --- [whodas-notification-service] [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 7007 (http)
+2026-10-08T20:24:02.436+02:00  INFO 18316 --- [whodas-notification-service] [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-10-08T20:24:02.437+02:00  INFO 18316 --- [whodas-notification-service] [           main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.34]
+2026-10-08T20:24:02.840+02:00  INFO 18316 --- [whodas-notification-service] [           main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2026-10-08T20:24:02.841+02:00  INFO 18316 --- [whodas-notification-service] [           main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 27844 ms
+2026-10-08T20:24:14.325+02:00  INFO 18316 --- [whodas-notification-service] [           main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-10-08T20:24:14.849+02:00  INFO 18316 --- [whodas-notification-service] [           main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.6.5.Final
+2026-10-08T20:24:15.092+02:00  INFO 18316 --- [whodas-notification-service] [           main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2026-10-08T20:24:16.377+02:00  INFO 18316 --- [whodas-notification-service] [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-10-08T20:24:16.573+02:00  INFO 18316 --- [whodas-notification-service] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-10-08T20:24:18.346+02:00  INFO 18316 --- [whodas-notification-service] [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@268f0ff3
+2026-10-08T20:24:18.352+02:00  INFO 18316 --- [whodas-notification-service] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2026-10-08T20:24:18.528+02:00  WARN 18316 --- [whodas-notification-service] [           main] org.hibernate.orm.deprecation            : HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-10-08T20:24:18.728+02:00  INFO 18316 --- [whodas-notification-service] [           main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 16.15
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-10-08T20:24:57.712+02:00  INFO 18316 --- [whodas-notification-service] [           main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-10-08T20:24:58.435+02:00  INFO 18316 --- [whodas-notification-service] [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-10-08T20:25:01.188+02:00  INFO 18316 --- [whodas-notification-service] [           main] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-10-08T20:25:13.491+02:00  WARN 18316 --- [whodas-notification-service] [           main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning

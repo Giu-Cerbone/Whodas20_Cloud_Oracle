@@ -1,0 +1,139 @@
+<div class="notification-page">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h3 class="mb-0"><i class="fas fa-bell me-2"></i>Notifiche</h3>
+    <button *ngIf="activeFilter === 'unread'" class="btn btn-outline-primary btn-sm" (click)="markAllAsRead()"
+            [disabled]="filteredNotifications.length === 0">
+      <i class="fas fa-check-double me-1"></i>Marca tutte come lette
+    </button>
+  </div>
+
+  <div class="card shadow-sm">
+    <div class="card-header bg-white border-bottom-0">
+      <ul class="nav nav-pills nav-sm">
+        <li class="nav-item" *ngFor="let filter of filters">
+          <button type="button" class="nav-link"
+                  [ngClass]="{
+                    'active': activeFilter === filter.key,
+                    'tab-unread': filter.key === 'unread',
+                    'tab-read': filter.key === 'read',
+                    'tab-deleted': filter.key === 'deleted',
+                    'tab-all': filter.key === 'all'
+                  }"
+                  (click)="selectFilter(filter.key)">
+            <i [class]="filter.icon + ' me-1'"></i>{{ filter.label }}
+            <span *ngIf="activeFilter === filter.key"
+                  class="badge bg-primary ms-1">
+              {{ filteredNotifications.length }}
+            </span>
+          </button>
+        </li>
+      </ul>
+    </div>
+
+    <div class="card-body p-0">
+      <div *ngIf="filteredNotifications.length === 0" class="text-center py-5">
+        <i class="fas fa-bell-slash fa-3x text-muted mb-3"></i>
+        <p class="text-muted">Nessuna notifica disponibile in questa sezione.</p>
+      </div>
+
+      <div class="list-group list-group-flush" *ngIf="filteredNotifications.length > 0">
+        <div *ngFor="let notification of filteredNotifications; trackBy: trackByIdx"
+             class="list-group-item notification-row"
+             [class.unread]="notification.dataLettura === null && notification.dataElimina === null"
+             [class.read]="notification.dataLettura !== null && notification.dataElimina === null"
+             [class.deleted]="notification.dataElimina !== null"
+             (click)="openNotification(notification)">
+          <div class="d-flex align-items-center">
+            <div class="notification-icon me-3">
+              <i *ngIf="notification.typeMessage === 'Warning'" class="fas fa-exclamation-triangle fa-lg text-warning"></i>
+              <i *ngIf="notification.typeMessage === 'Info'" class="fas fa-info-circle fa-lg text-info"></i>
+              <i *ngIf="notification.typeMessage === 'Error'" class="fas fa-exclamation-circle fa-lg text-danger"></i>
+              <i *ngIf="notification.typeMessage !== 'Warning' && notification.typeMessage !== 'Info' && notification.typeMessage !== 'Error'" class="fas fa-bell fa-lg text-primary"></i>
+            </div>
+            <div class="flex-grow-1">
+              <div class="d-flex justify-content-between">
+                <span class="fw-bold">{{ notification.oggetto }}</span>
+                <small class="text-muted">{{ notification.dataSpedizione | date:'dd/MM/yyyy HH:mm' }}</small>
+              </div>
+              <div class="text-muted small text-truncate">{{ notification.description }}</div>
+              <div *ngIf="notification.username" class="text-muted small">
+                <i class="fas fa-user me-1"></i>{{ notification.username }}
+              </div>
+            </div>
+            <div *ngIf="notification.dataLettura === null && notification.dataElimina === null" class="ms-2">
+              <span class="badge bg-primary">Nuova</span>
+            </div>
+            <div class="ms-2 dropdown">
+              <button *ngIf="activeFilter !== 'deleted' && notification.dataElimina === null"
+                      type="button" class="btn btn-sm btn-outline-secondary"
+                      (click)="$event.stopPropagation(); deleteNotification(notification)"
+                      title="Elimina">
+                <i class="fas fa-trash"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal dettaglio notifica -->
+  <div class="modal-backdrop fade show" *ngIf="selectedNotification" (click)="closeDetail()"></div>
+  <div class="modal fade show d-block" tabindex="-1" *ngIf="selectedNotification" role="dialog" aria-modal="true" (click)="closeDetail()">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document" (click)="$event.stopPropagation()">
+      <div class="modal-content bg-white">
+        <div class="modal-header">
+          <h5 class="modal-title">
+            <i *ngIf="selectedNotification.typeMessage === 'Warning'" class="fas fa-exclamation-triangle text-warning me-2"></i>
+            <i *ngIf="selectedNotification.typeMessage === 'Info'" class="fas fa-info-circle text-info me-2"></i>
+            <i *ngIf="selectedNotification.typeMessage === 'Error'" class="fas fa-exclamation-circle text-danger me-2"></i>
+            <i *ngIf="selectedNotification.typeMessage !== 'Warning' && selectedNotification.typeMessage !== 'Info' && selectedNotification.typeMessage !== 'Error'" class="fas fa-bell text-primary me-2"></i>
+            {{ selectedNotification.oggetto }}
+          </h5>
+          <button type="button" class="btn-close" (click)="closeDetail()"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label fw-bold">Tipo messaggio</label>
+            <span class="badge" [ngClass]="{
+              'bg-warning text-dark': selectedNotification.typeMessage === 'Warning',
+              'bg-info': selectedNotification.typeMessage === 'Info',
+              'bg-danger': selectedNotification.typeMessage === 'Error'
+            }">{{ selectedNotification.typeMessage }}</span>
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-bold">Descrizione</label>
+            <div class="border rounded p-2 bg-light">{{ selectedNotification.description }}</div>
+          </div>
+          <div class="row g-2 small text-muted">
+            <div class="col-6">
+              <i class="fas fa-clock me-1"></i>Data spedizione: {{ selectedNotification.dataSpedizione | date:'dd/MM/yyyy HH:mm:ss' }}
+            </div>
+            <div class="col-6" *ngIf="selectedNotification.dataLettura">
+              <i class="fas fa-eye me-1"></i>Data lettura: {{ selectedNotification.dataLettura | date:'dd/MM/yyyy HH:mm:ss' }}
+            </div>
+            <div class="col-6" *ngIf="selectedNotification.dataElimina">
+              <i class="fas fa-trash me-1"></i>Data eliminazione: {{ selectedNotification.dataElimina | date:'dd/MM/yyyy HH:mm:ss' }}
+            </div>
+            <div class="col-6" *ngIf="selectedNotification.username">
+              <i class="fas fa-user me-1"></i>Operatore: {{ selectedNotification.username }}
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="closeDetail()">Chiudi</button>
+          <button *ngIf="selectedNotification.dataLettura === null && selectedNotification.dataElimina === null"
+            type="button" class="btn btn-outline-primary"
+            (click)="notificationService.markAsRead(selectedNotification.id!).subscribe(closeDetail.bind(this))">
+            <i class="fas fa-check me-1"></i>Marca letta
+          </button>
+          <button *ngIf="selectedNotification.dataElimina === null"
+            type="button" class="btn btn-outline-danger"
+            (click)="deleteNotification(selectedNotification); closeDetail()">
+            <i class="fas fa-trash me-1"></i>Elimina
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

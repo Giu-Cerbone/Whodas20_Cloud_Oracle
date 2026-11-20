@@ -1,0 +1,277 @@
+<div class="container-fluid py-4">
+  <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+    <h2 class="mb-0"><i class="fas fa-history me-2 text-primary"></i>Storico importazioni documenti</h2>
+    <div class="d-flex gap-2">
+      <a class="btn btn-outline-primary" routerLink="/documents/download">
+        <i class="fas fa-file-pdf me-2"></i> Scarica modello
+      </a>
+      <a class="btn btn-primary" routerLink="/documents">
+        <i class="fas fa-file-import me-2"></i> Importa documento
+      </a>
+    </div>
+  </div>
+
+  <div class="card shadow-sm">
+    <div class="card-body p-0">
+      @if (isLoading) {
+        <div class="text-center py-5">
+          <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Caricamento...</span>
+          </div>
+          <p class="mt-2 text-muted">Caricamento storico...</p>
+        </div>
+      } @else {
+        <div class="table-responsive">
+          <table class="table table-hover mb-0">
+            <thead class="table-light">
+              <tr>
+                <th scope="col">Data</th>
+                <th scope="col">File</th>
+                <th scope="col">Tipo</th>
+                <th scope="col">Metodo</th>
+                <th scope="col">Stato</th>
+                <th scope="col">Paziente</th>
+                <th scope="col">Valutazione</th>
+                <th scope="col" class="text-center">Risposte</th>
+                <th scope="col" class="text-center">Azioni</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (imported of importList; track trackByImportId($index, imported)) {
+                <tr [class.table-active]="selectedImportId === imported.id">
+                  <td class="text-nowrap">{{ formatDate(imported.createdAt) }}</td>
+                  <td>
+                    <i class="fas fa-file me-1 text-muted"></i>{{ imported.fileName || '-' }}
+                    <div class="small text-muted">{{ formatSize(imported.fileSizeBytes) }}</div>
+                  </td>
+                  <td>{{ imported.fileType || '-' }}</td>
+                  <td class="small">{{ getMethodLabel(imported.extractionMethod) }}</td>
+                  <td><span class="badge" [class]="getStatusBadgeClass(imported.status)">{{ getStatusLabel(imported.status) }}</span></td>
+                  <td>{{ imported.patientName || '-' }}</td>
+                  <td>{{ imported.assessmentId || '-' }}</td>
+                  <td class="text-center">{{ imported.answersImported ?? 0 }}</td>
+                  <td class="text-center">
+                    <div class="btn-group btn-group-sm" role="group">
+                      <button class="btn btn-outline-primary" type="button" (click)="onOpen(imported)"
+                              [title]="selectedImportId === imported.id ? 'Chiudi dettagli' : 'Dettagli'" aria-label="Dettagli">
+                        <i class="fas" [class.fa-eye]="selectedImportId !== imported.id" [class.fa-times]="selectedImportId === imported.id"></i>
+                      </button>
+                      <button class="btn btn-outline-secondary" type="button" (click)="onDownloadOriginal(imported)"
+                              [disabled]="isDownloadingFile" title="Scarica originale" aria-label="Scarica originale">
+                        <i class="fas fa-download"></i>
+                      </button>
+                      <button class="btn btn-outline-danger" type="button" (click)="onDelete(imported)"
+                              title="Elimina" aria-label="Elimina">
+                        <i class="fas fa-trash"></i>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              } @empty {
+                <tr>
+                  <td colspan="9" class="text-center py-4 text-muted">
+                    <i class="fas fa-inbox fa-2x mb-2 d-block opacity-50"></i>
+                    Nessuna importazione registrata
+                    <div class="mt-2">
+                      <a routerLink="/documents" class="btn btn-sm btn-outline-primary">Importa un documento</a>
+                    </div>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+
+        <nav class="px-3 py-2 border-top" aria-label="Paginazione importazioni">
+          <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <div class="small text-muted">
+              Pagina {{ currentPage }} &middot; {{ totalItems }} elementi caricati
+              <select class="form-select form-select-sm d-inline-block w-auto ms-2" (change)="onPageSizeChange($any($event.target).value)">
+                @for (size of pageSizeOptions; track size) {
+                  <option [value]="size" [selected]="size === pageSize">{{ size }}</option>
+                }
+              </select>
+            </div>
+            <ul class="pagination pagination-sm mb-0">
+              <li class="page-item" [class.disabled]="currentPage === 1">
+                <button class="page-link" type="button" (click)="onPageChange(currentPage - 1)" [disabled]="currentPage === 1" aria-label="Pagina precedente">
+                  <i class="fas fa-angle-left"></i>
+                </button>
+              </li>
+              <li class="page-item disabled">
+                <span class="page-link">{{ currentPage }} / {{ totalPages }}</span>
+              </li>
+              <li class="page-item" [class.disabled]="currentPage === totalPages || totalPages === 1">
+                <button class="page-link" type="button" (click)="onPageChange(currentPage + 1)"
+                        [disabled]="currentPage === totalPages || totalPages === 1" aria-label="Pagina successiva">
+                  <i class="fas fa-angle-right"></i>
+                </button>
+              </li>
+            </ul>
+          </div>
+        </nav>
+      }
+    </div>
+  </div>
+
+  <!-- Dettaglio importazione -->
+  @if (selectedImportId) {
+    <div class="card shadow-sm mt-4">
+      <div class="card-header bg-light d-flex justify-content-between align-items-center">
+        <h5 class="mb-0"><i class="fas fa-file-circle-info me-2 text-primary"></i>Dettaglio importazione #{{ selectedImportId }}</h5>
+        <button class="btn btn-outline-secondary btn-sm" type="button" (click)="closeDetail()">
+          <i class="fas fa-xmark me-1"></i> Chiudi
+        </button>
+      </div>
+      <div class="card-body">
+        @if (isLoadingDetail) {
+          <div class="text-center py-4">
+            <div class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">Caricamento...</span>
+            </div>
+            <p class="mt-2 text-muted mb-0">Caricamento dettaglio...</p>
+          </div>
+        } @else if (detail) {
+          <div class="row g-3">
+            <div class="col-md-6">
+              <div class="card detail-card h-100">
+                <div class="card-body py-2">
+                  <h6 class="mb-1"><i class="fas fa-user me-2 text-primary"></i>Paziente
+                    @if (detail.patient?.created) {
+                      <span class="badge bg-info ms-2">creato</span>
+                    }
+                  </h6>
+                  <div class="small">
+                    {{ detail.patient?.firstName }} {{ detail.patient?.lastName }}
+                    @if (detail.patient?.fiscalCode) {
+                      <span class="badge bg-secondary ms-2">{{ detail.patient?.fiscalCode }}</span>
+                    }
+                    <span class="text-muted ms-2">ID {{ detail.patient?.id ?? '-' }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="card detail-card h-100">
+                <div class="card-body py-2">
+                  <h6 class="mb-1"><i class="fas fa-clipboard-list me-2 text-primary"></i>Valutazione
+                    @if (detail.assessment?.created) {
+                      <span class="badge bg-info ms-2">creata</span>
+                    }
+                  </h6>
+                  <div class="small">
+                    ID {{ detail.assessment?.id ?? '-' }}
+                    <span class="badge ms-2" [class]="getStatusBadgeClass(detail.assessment?.status)">{{ detail.assessment?.status || '-' }}</span>
+                  </div>
+                  <div class="small text-muted">
+                    Disabilità: {{ detail.assessment?.overallPercentDisability !== null && detail.assessment?.overallPercentDisability !== undefined ? (detail.assessment?.overallPercentDisability | ceilValue) + '%' : '-' }}
+                    &middot; risposte importate: {{ detail.assessment?.answersImported ?? 0 }}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="small text-muted mt-3">
+            <i class="fas fa-file me-2"></i>{{ detail.fileName }} ({{ detail.fileType }})
+            &middot; <i class="fas fa-microscope me-2"></i>{{ getMethodLabel(detail.extractionMethod) }}
+            &middot; <i class="fas fa-clock me-2"></i>{{ formatDate(detail.createdAt) }}
+          </div>
+
+          <div class="d-flex gap-2 mt-3 flex-wrap">
+            @if (detail.assessment?.id) {
+              <button class="btn btn-outline-primary btn-sm" type="button" (click)="onGoToAssessment()">
+                <i class="fas fa-arrow-right me-1"></i> Vai alla valutazione
+              </button>
+            }
+            <button class="btn btn-outline-secondary btn-sm" type="button" (click)="onDownloadDetailFile()"
+                    [disabled]="isDownloadingFile">
+              @if (isDownloadingFile) {
+                <span class="spinner-border spinner-border-sm me-1" role="status"></span>
+              } @else {
+                <i class="fas fa-download me-1"></i>
+              }
+              Scarica documento originale
+            </button>
+          </div>
+
+          @if (detail.warnings && detail.warnings.length > 0) {
+            <div class="alert alert-warning mt-3 mb-0">
+              <div class="d-flex justify-content-between align-items-center">
+                <strong><i class="fas fa-exclamation-triangle me-2"></i>Avvisi ({{ detail.warnings.length }})</strong>
+                <button class="btn btn-sm btn-outline-warning" type="button" (click)="showWarnings = !showWarnings">
+                  <i class="fas" [class.fa-chevron-down]="!showWarnings" [class.fa-chevron-up]="showWarnings"></i>
+                </button>
+              </div>
+              @if (showWarnings) {
+                <ul class="small mb-0 mt-2">
+                  @for (warning of detail.warnings; track warning) {
+                    <li>{{ warning }}</li>
+                  }
+                </ul>
+              }
+            </div>
+          }
+        } @else {
+          <p class="text-muted mb-0">Nessun dettaglio disponibile per questa importazione.</p>
+        }
+      </div>
+
+      @if (detail?.items && detail.items.length > 0) {
+        <div class="table-responsive">
+          <table class="table table-hover table-sm mb-0">
+            <thead class="table-light">
+              <tr>
+                <th scope="col">Item</th>
+                <th scope="col">Dominio</th>
+                <th scope="col">Domanda</th>
+                <th scope="col">Valore</th>
+                <th scope="col" class="text-center">Punteggio</th>
+                <th scope="col" class="text-center">Confidenza</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (item of detail.items; track trackByItemCode($index, item)) {
+                <tr [class.item-warning]="isItemWarning(item)">
+                  <td>{{ item.itemCode || '-' }}</td>
+                  <td>{{ item.domainLabelIt || item.domain || '-' }}</td>
+                  <td>{{ item.questionTextIt || '-' }}</td>
+                  <td>{{ item.rawValue || '-' }}</td>
+                  <td class="text-center">{{ item.score !== null && item.score !== undefined ? item.score : '-' }}</td>
+                  <td class="text-center" [class.confidence-low]="(item.confidence ?? 0) < 0.6">{{ formatConfidence(item.confidence) }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+
+      @if (detail?.fields && detail.fields.length > 0) {
+        <div class="table-responsive border-top">
+          <table class="table table-hover table-sm mb-0">
+            <thead class="table-light">
+              <tr>
+                <th scope="col">Campo</th>
+                <th scope="col">Etichetta</th>
+                <th scope="col">Valore</th>
+                <th scope="col">Valore normalizzato</th>
+                <th scope="col" class="text-center">Confidenza</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (field of detail.fields; track $index) {
+                <tr>
+                  <td><code>{{ field.key || '-' }}</code></td>
+                  <td>{{ field.label || '-' }}</td>
+                  <td>{{ field.rawValue || '-' }}</td>
+                  <td>{{ field.normalizedValue || '-' }}</td>
+                  <td class="text-center" [class.confidence-low]="(field.confidence ?? 0) < 0.6">{{ formatConfidence(field.confidence) }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    </div>
+  }
+</div>

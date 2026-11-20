@@ -1,0 +1,43 @@
+# Keycloak Setup Commands
+# Run these commands one by one to set up Keycloak
+
+# 1. Create Realm
+curl.exe -X POST http://localhost:8080/admin/realms `
+  -H "Content-Type: application/json" `
+  -d "{\"realm\":\"whodas-realm\",\"enabled\":true,\"displayName\":\"WHODAS 2.0\"}" `
+  -u admin:admin
+
+# 2. Get Admin Token
+curl.exe -s -X POST http://localhost:8080/realms/whodas-realm/protocol/openid-connect/token `
+  -H "Content-Type: application/x-www-form-urlencoded" `
+  --data "username=admin&password=admin&client_id=admin-cli&grant_type=password"
+
+# Copy the access_token from the response above and replace TOKEN below
+
+# 3. Create Client (replace TOKEN with actual token)
+curl.exe -X POST http://localhost:8080/admin/realms/whodas-realm/clients `
+  -H "Content-Type: application/json" `
+  -H "Authorization: Bearer TOKEN" `
+  -d "{\"clientId\":\"whodas-be\",\"name\":\"WHODAS Backend\",\"enabled\":true,\"clientAuthenticatorType\":\"client-secret\",\"secret\":\"whodas-be-secret-2024\",\"standardFlowEnabled\":true,\"implicitFlowEnabled\":false,\"serviceAccountsEnabled\":false,\"directAccessGrantsEnabled\":false,\"redirectUris\":[\"http://localhost:4200/*\"],\"webOrigins\":[\"http://localhost:4200\"],\"protocol\":\"openid-connect\",\"attributes\":{\"access.token.lifespan\":\"3600\",\"refresh.token.lifespan\":\"86400\"},\"defaultAccessScopes\":[\"openid\",\"profile\",\"email\"],\"optionalScopes\":[\"offline_access\"]}"
+
+# 4. Create Roles
+curl.exe -X POST http://localhost:8080/admin/realms/whodas-realm/roles `
+  -H "Content-Type: application/json" `
+  -H "Authorization: Bearer TOKEN" `
+  -d "{\"name\":\"user\",\"description\":\"Regular user role\"}"
+
+curl.exe -X POST http://localhost:8080/admin/realms/whodas-realm/roles `
+  -H "Content-Type: application/json" `
+  -H "Authorization: Bearer TOKEN" `
+  -d "{\"name\":\"admin\",\"description\":\"Administrator role\"}"
+
+# 5. Create Test User
+curl.exe -X POST http://localhost:8080/admin/realms/whodas-realm/users `
+  -H "Content-Type: application/json" `
+  -H "Authorization: Bearer TOKEN" `
+  -d "{\"username\":\"testuser\",\"email\":\"testuser@whodas.com\",\"enabled\":true,\"credentials\":[{\"type\":\"password\",\"value\":\"test123\",\"temporary\":false}],\"realmRoles\":[\"user\"]}"
+
+# 6. Test Authentication
+curl.exe -X POST http://localhost:8080/realms/whodas-realm/protocol/openid-connect/token `
+  -H "Content-Type: application/x-www-form-urlencoded" `
+  --data "username=testuser&password=test123&client_id=whodas-be&grant_type=password"

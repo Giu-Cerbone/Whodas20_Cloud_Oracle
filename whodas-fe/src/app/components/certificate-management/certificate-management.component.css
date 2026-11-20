@@ -1,0 +1,64 @@
+.table td, .table th {
+  vertical-align: middle;
+}
+
+.detail-label {
+  font-size: 0.8rem;
+  color: #6c757d;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.btn-group-sm .btn {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.8rem;
+}
+
+.pagination .page-link {
+  color: #0d6efd;
+  border-color: #dee2e6;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.8rem;
+}
+
+.pagination .page-item.active .page-link {
+  background-color: #0d6efd;
+  border-color: #0d6efd;
+  color: white;
+}
+
+.pagination .page-item.disabled .page-link {
+  color: #6c757d;
+  pointer-events: none;
+  background-color: white;
+}
+
+.sortable-table th.sortable {
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.15s ease;
+  white-space: nowrap;
+}
+
+.sortable-table th.sortable:hover {
+  background-color: #b6d4fe !important;
+}
+
+.sortable-table th.sortable.sorted {
+  background-color: #9ec5fe !important;
+  color: #0d6efd;
+}
+
+.sortable-table th.sortable i.fa-sort {
+  color: #6ea8fe;
+  margin-left: 0.25rem;
+  font-size: 0.75rem;
+  opacity: 0.8;
+}
+
+.sortable-table th.sortable.sorted i.fa-sort-up,
+.sortable-table th.sortable.sorted i.fa-sort-down {
+  color: #0d6efd;
+  margin-left: 0.25rem;
+  font-size: 0.75rem;
+}

@@ -1,0 +1,144 @@
+<div class="container-fluid py-4">
+  <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+    <h2 class="mb-0"><i class="fas fa-users me-2 text-primary"></i>Gestione Pazienti</h2>
+    <button class="btn btn-primary" type="button" (click)="onNewPatient()">
+      <i class="fas fa-plus me-2"></i> Nuovo Paziente
+    </button>
+  </div>
+
+  <!-- Search & Filters -->
+  <div class="card shadow-sm mb-4">
+    <div class="card-body">
+      <div class="row g-3 align-items-end">
+        <div class="col-md-4">
+          <label class="form-label small fw-bold">Nome</label>
+          <input type="text" class="form-control" placeholder="Cerca per nome..." [(ngModel)]="searchFirstName" (input)="onSearch()">
+        </div>
+        <div class="col-md-4">
+          <label class="form-label small fw-bold">Cognome</label>
+          <input type="text" class="form-control" placeholder="Cerca per cognome..." [(ngModel)]="searchLastName" (input)="onSearch()">
+        </div>
+        <div class="col-md-3">
+          <label class="form-label small fw-bold">Risultati per pagina</label>
+          <select class="form-select" [(ngModel)]="pageSize" (change)="onPageSizeChange()">
+            <option *ngFor="let size of pageSizeOptions" [value]="size">{{ size }}</option>
+          </select>
+        </div>
+        <div class="col-md-1">
+          <button class="btn btn-outline-secondary w-100" type="button" (click)="clearFilters()" title="Pulisci filtri">
+            <i class="fas fa-eraser"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Table -->
+  <div class="card shadow-sm">
+    <div class="card-body p-0">
+      @if (isLoading) {
+        <div class="text-center py-5">
+          <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Caricamento...</span>
+          </div>
+          <p class="mt-2 text-muted">Caricamento pazienti...</p>
+        </div>
+      } @else {
+        <div class="table-responsive">
+          <table class="table table-hover mb-0 sortable-table">
+            <thead class="table-light">
+              <tr>
+                <th scope="col" (click)="onSort('id')" class="sortable">
+                  ID <i class="fas" [class]="getSortIcon('id')"></i>
+                </th>
+                <th scope="col" (click)="onSort('firstName')" class="sortable">
+                  Nome <i class="fas" [class]="getSortIcon('firstName')"></i>
+                </th>
+                <th scope="col" (click)="onSort('lastName')" class="sortable">
+                  Cognome <i class="fas" [class]="getSortIcon('lastName')"></i>
+                </th>
+                <th scope="col" (click)="onSort('fiscalCode')" class="sortable">
+                  Codice Fiscale <i class="fas" [class]="getSortIcon('fiscalCode')"></i>
+                </th>
+                <th scope="col" (click)="onSort('birthDate')" class="sortable">
+                  Data Nascita <i class="fas" [class]="getSortIcon('birthDate')"></i>
+                </th>
+                <th scope="col" (click)="onSort('gender')" class="sortable">
+                  Genere <i class="fas" [class]="getSortIcon('gender')"></i>
+                </th>
+                <th scope="col" class="text-center">Azioni</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (patient of paginatedPatients; track trackByPatientId($index, patient)) {
+                <tr>
+                  <td>{{ patient.id }}</td>
+                  <td>{{ patient.firstName }}</td>
+                  <td>{{ patient.lastName }}</td>
+                  <td>{{ patient.fiscalCode || '-' }}</td>
+                  <td>{{ (patient.birthDate | date:'dd/MM/yyyy') || '-' }}</td>
+                  <td>{{ patient.gender || '-' }}</td>
+                  <td class="text-center">
+                    <div class="btn-group btn-group-sm" role="group">
+                      <button class="btn btn-outline-primary" type="button" (click)="onEdit(patient)" title="Modifica" aria-label="Modifica">
+                        <i class="fas fa-edit"></i>
+                      </button>
+                      <button class="btn btn-outline-danger" type="button" (click)="onDelete(patient)" title="Elimina" aria-label="Elimina">
+                        <i class="fas fa-trash"></i>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              } @empty {
+                <tr>
+                  <td colspan="7" class="text-center py-4 text-muted">
+                    <i class="fas fa-search fa-2x mb-2 d-block opacity-50"></i>
+                    Nessun paziente trovato
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Pagination -->
+        @if (totalPages > 1) {
+          <nav class="px-3 py-2 border-top" aria-label="Paginazione pazienti">
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+              <div class="small text-muted">
+                Mostrando {{ (currentPage - 1) * pageSize + 1 }} - {{ Math.min(currentPage * pageSize, totalItems) }} di {{ totalItems }} pazienti
+              </div>
+              <ul class="pagination pagination-sm mb-0">
+                <li class="page-item" [class.disabled]="currentPage === 1">
+                  <button class="page-link" type="button" (click)="onPageChange(1)" [disabled]="currentPage === 1" aria-label="Prima pagina">
+                    <i class="fas fa-angle-double-left"></i>
+                  </button>
+                </li>
+                <li class="page-item" [class.disabled]="currentPage === 1">
+                  <button class="page-link" type="button" (click)="onPageChange(currentPage - 1)" [disabled]="currentPage === 1" aria-label="Pagina precedente">
+                    <i class="fas fa-angle-left"></i>
+                  </button>
+                </li>
+                @for (page of pages; track page) {
+                  <li class="page-item" [class.active]="page === currentPage">
+                    <button class="page-link" type="button" (click)="onPageChange(page)">{{ page }}</button>
+                  </li>
+                }
+                <li class="page-item" [class.disabled]="currentPage === totalPages">
+                  <button class="page-link" type="button" (click)="onPageChange(currentPage + 1)" [disabled]="currentPage === totalPages" aria-label="Pagina successiva">
+                    <i class="fas fa-angle-right"></i>
+                  </button>
+                </li>
+                <li class="page-item" [class.disabled]="currentPage === totalPages">
+                  <button class="page-link" type="button" (click)="onPageChange(totalPages)" [disabled]="currentPage === totalPages" aria-label="Ultima pagina">
+                    <i class="fas fa-angle-double-right"></i>
+                  </button>
+                </li>
+              </ul>
+            </div>
+          </nav>
+        }
+      }
+    </div>
+  </div>
+</div>

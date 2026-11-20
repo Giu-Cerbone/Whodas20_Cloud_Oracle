@@ -1,0 +1,7 @@
+node_modules/
+logs/
+.angular/
+target/
+dist/
+*.log
+*.jar

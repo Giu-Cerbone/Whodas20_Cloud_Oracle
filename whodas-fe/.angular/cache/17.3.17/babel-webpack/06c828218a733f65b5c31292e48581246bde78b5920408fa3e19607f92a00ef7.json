@@ -1,0 +1,1 @@
+{"ast":null,"code":"export const environment = {\n  production: true,\n  // Stessa forma della configurazione di sviluppo: in produzione il reverse\n  // proxy (stesso dominio) inoltra /api al gateway, quindi nessun CORS.\n  baseUrl: '/api',\n  apiVersion: 'v1'\n};","map":null,"metadata":{},"sourceType":"module","externalDependencies":[]}

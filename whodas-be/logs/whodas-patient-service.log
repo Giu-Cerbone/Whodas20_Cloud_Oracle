@@ -1,0 +1,81 @@
+2026-11-20 08:43:41.905 DEBUG [http-nio-7002-exec-9] org.hibernate.SQL - 
+    select
+        p1_0.id,
+        p1_0.address,
+        p1_0.birth_date,
+        p1_0.birth_place,
+        p1_0.email,
+        p1_0.first_name,
+        p1_0.fiscal_code,
+        p1_0.gender,
+        p1_0.health_condition,
+        p1_0.last_name,
+        p1_0.notes,
+        p1_0.phone 
+    from
+        patients p1_0
+2026-11-20 08:44:48.099 DEBUG [http-nio-7002-exec-1] org.hibernate.SQL - 
+    select
+        p1_0.id,
+        p1_0.address,
+        p1_0.birth_date,
+        p1_0.birth_place,
+        p1_0.email,
+        p1_0.first_name,
+        p1_0.fiscal_code,
+        p1_0.gender,
+        p1_0.health_condition,
+        p1_0.last_name,
+        p1_0.notes,
+        p1_0.phone 
+    from
+        patients p1_0
+2026-11-20 08:45:40.638 DEBUG [http-nio-7002-exec-2] org.hibernate.SQL - 
+    select
+        p1_0.id,
+        p1_0.address,
+        p1_0.birth_date,
+        p1_0.birth_place,
+        p1_0.email,
+        p1_0.first_name,
+        p1_0.fiscal_code,
+        p1_0.gender,
+        p1_0.health_condition,
+        p1_0.last_name,
+        p1_0.notes,
+        p1_0.phone 
+    from
+        patients p1_0 
+    where
+        p1_0.id=?
+2026-11-20 08:45:57.802 DEBUG [http-nio-7002-exec-3] org.hibernate.SQL - 
+    select
+        p1_0.id,
+        p1_0.address,
+        p1_0.birth_date,
+        p1_0.birth_place,
+        p1_0.email,
+        p1_0.first_name,
+        p1_0.fiscal_code,
+        p1_0.gender,
+        p1_0.health_condition,
+        p1_0.last_name,
+        p1_0.notes,
+        p1_0.phone 
+    from
+        patients p1_0 
+    where
+        p1_0.id=?
+2026-11-20 09:04:00.742 INFO  [http-nio-7002-exec-10] o.a.coyote.http11.Http11Processor - Error parsing HTTP request header
+ Note: further occurrences of HTTP request parsing errors will be logged at DEBUG level.
+java.lang.IllegalArgumentException: Invalid character found in the HTTP protocol [RTSP/1.00x0d0x0a0x0d0x0a...]
+	at org.apache.coyote.http11.Http11InputBuffer.parseRequestLine(Http11InputBuffer.java:557)
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:270)
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63)
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:905)
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1741)
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1190)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:659)
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:63)
+	at java.base/java.lang.Thread.run(Unknown Source)

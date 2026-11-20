@@ -1,0 +1,396 @@
+services:
+  # PostgreSQL database
+  db:
+    image: postgres:16-alpine
+    container_name: whodas-db
+    environment:
+      POSTGRES_USER: ${DB_USERNAME:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
+      POSTGRES_DB: ${DB_NAME:-whodas}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./DLLDB:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # Mail Server (docker-mailserver)
+  mailserver:
+    image: docker.io/mailserver/docker-mailserver:latest
+    container_name: whodas-mailserver
+    hostname: mail.whodas.local
+    domainname: whodas.local
+    environment:
+      - ENABLE_POSTFIX=1
+      - ENABLE_SASL=1
+      - ENABLE_POP3=0
+      - ENABLE_IMAP=0
+      - ENABLE_LDAP=0
+      - ENABLE_CLAMAV=0
+      - ENABLE_RSPAMD=0
+      - ENABLE_FAIL2BAN=0
+      - ENABLE_POSTGREY=0
+      - OVERRIDE_HOSTNAME=mail.whodas.local
+      - POSTFIX_INET_PROTOCOLS=ipv4
+      - SMTP_ONLY=1
+      - POSTFIX_MYNETWORKS=172.0.0.0/8,10.0.0.0/8,192.168.0.0/16
+      - POSTFIX_RELAY_HOST=[smtp-mail.outlook.com]
+      - POSTFIX_RELAY_PORT=587
+      - POSTFIX_SMTP_TLS_SECURITY_LEVEL=encrypt
+      - POSTFIX_SMTP_SASL_AUTH_ENABLE=yes
+      - POSTFIX_SMTP_SASL_PASSWORD_MAPS=hash:/etc/postfix/sasl_passwd
+      - POSTFIX_SMTP_SASL_SECURITY_OPTIONS=noanonymous
+      - POSTFIX_SMTP_TLS_CA_FILE=/etc/ssl/certs/ca-certificates.crt
+      - SASL_PASSWD=[smtp-mail.outlook.com]:587 giuseppe_cerbone@hotmail.com:GiuCerbone_1234$
+    ports:
+      - "25:25"
+      - "587:587"
+    volumes:
+      - mailserver_data:/var/mail
+      - mailserver_logs:/var/log/mail
+      - mailserver_config:/etc/dms
+    cap_add:
+      - NET_ADMIN
+      - SYS_RESOURCE
+      - CAP_DAC_OVERRIDE
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "nc -z localhost 25"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+
+  # Patient Service
+  patient-service:
+    build:
+      context: whodas-patient-service
+      dockerfile: Dockerfile
+    container_name: whodas-patient-service
+    environment:
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_NAME=${DB_NAME:-whodas}
+      - DB_USERNAME=${DB_USERNAME:-postgres}
+      - DB_PASSWORD=${DB_PASSWORD:-postgres}
+      - SERVER_PORT=7002
+      - LOG_PATH=/app/logs
+    ports:
+      - "7002:7002"
+    volumes:
+      - ./logs:/app/logs
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # Questionnaire Service
+  questionnaire-service:
+    build:
+      context: whodas-questionnaire-service
+      dockerfile: Dockerfile
+    container_name: whodas-questionnaire-service
+    environment:
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_NAME=${DB_NAME:-whodas}
+      - DB_USERNAME=${DB_USERNAME:-postgres}
+      - DB_PASSWORD=${DB_PASSWORD:-postgres}
+      - SERVER_PORT=7003
+      - LOG_PATH=/app/logs
+    ports:
+      - "7003:7003"
+    volumes:
+      - ./logs:/app/logs
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # Assessment Service
+  assessment-service:
+    build:
+      context: whodas-assessment-service
+      dockerfile: Dockerfile
+    container_name: whodas-assessment-service
+    environment:
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_NAME=${DB_NAME:-whodas}
+      - DB_USERNAME=${DB_USERNAME:-postgres}
+      - DB_PASSWORD=${DB_PASSWORD:-postgres}
+      - SERVER_PORT=7004
+      - LOG_PATH=/app/logs
+    ports:
+      - "7004:7004"
+    volumes:
+      - ./logs:/app/logs
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # Certificate Service
+  certificate-service:
+    build:
+      context: whodas-certificate-service
+      dockerfile: Dockerfile
+    container_name: whodas-certificate-service
+    environment:
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_NAME=${DB_NAME:-whodas}
+      - DB_USERNAME=${DB_USERNAME:-postgres}
+      - DB_PASSWORD=${DB_PASSWORD:-postgres}
+      - SERVER_PORT=7005
+      - NOTIFICATION_SERVICE_URL=http://notification-service:7007
+      - LOG_PATH=/app/logs
+    ports:
+      - "7005:7005"
+    volumes:
+      - ./logs:/app/logs
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # Document Service
+  document-service:
+    build:
+      context: whodas-document-service
+      dockerfile: Dockerfile
+    container_name: whodas-document-service
+    environment:
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_NAME=${DB_NAME:-whodas}
+      - DB_USERNAME=${DB_USERNAME:-postgres}
+      - DB_PASSWORD=${DB_PASSWORD:-postgres}
+      - SERVER_PORT=7006
+      - PATIENT_SERVICE_URL=http://patient-service:7002
+      - QUESTIONNAIRE_SERVICE_URL=http://questionnaire-service:7003
+      - ASSESSMENT_SERVICE_URL=http://assessment-service:7004
+      - LOG_PATH=/app/logs
+    ports:
+      - "7006:7006"
+    volumes:
+      - ./logs:/app/logs
+    depends_on:
+      db:
+        condition: service_healthy
+      patient-service:
+        condition: service_started
+      questionnaire-service:
+        condition: service_started
+      assessment-service:
+        condition: service_started
+    restart: unless-stopped
+
+  # Notification Service
+  notification-service:
+    build:
+      context: whodas-notification-service
+      dockerfile: Dockerfile
+    container_name: whodas-notification-service
+    environment:
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_NAME=${DB_NAME:-whodas}
+      - DB_USERNAME=${DB_USERNAME:-postgres}
+      - DB_PASSWORD=${DB_PASSWORD:-postgres}
+      - SERVER_PORT=7007
+      - LOG_PATH=/app/logs
+    ports:
+      - "7007:7007"
+    volumes:
+      - ./logs:/app/logs
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # User Service (registrazione utenze)
+  user-service:
+    build:
+      context: whodas-user-service
+      dockerfile: Dockerfile
+    container_name: whodas-user-service
+    environment:
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_NAME=${DB_NAME:-whodas}
+      - DB_USERNAME=${DB_USERNAME:-postgres}
+      - DB_PASSWORD=${DB_PASSWORD:-postgres}
+      - SERVER_PORT=7008
+      - KEYCLOAK_BASE_URL=http://keycloak:8080
+      - KEYCLOAK_REALM=whodas-realm
+      - KEYCLOAK_ADMIN=admin
+      - KEYCLOAK_ADMIN_PASSWORD=admin
+      - KEYCLOAK_LDAP_PROVIDER_ID=a81a47e5-121c-4d8b-b480-3b6e1029f267
+      - LDAP_URL=ldap://ldap:389
+      - LDAP_ADMIN_PASSWORD=admin
+      - MAIL_HOST=smtp-mail.outlook.com
+      - MAIL_PORT=587
+      - MAIL_USERNAME=giuseppe_cerbone@hotmail.com
+      - MAIL_PASSWORD=GiuCerbone_1234$
+      - APP_EMAIL_ENABLED=true
+      - APP_FRONTEND_URL=http://localhost
+      - LOG_PATH=/app/logs
+    ports:
+      - "7008:7008"
+    volumes:
+      - ./logs:/app/logs
+    depends_on:
+      db:
+        condition: service_healthy
+      ldap:
+        condition: service_started
+      keycloak:
+        condition: service_started
+    restart: unless-stopped
+
+ # Keycloak SSO
+  keycloak-db:
+    image: postgres:16-alpine
+    container_name: whodas-keycloak-db
+    environment:
+      POSTGRES_USER: ${KC_DB_USERNAME:-keycloak}
+      POSTGRES_PASSWORD: ${KC_DB_PASSWORD:-keycloak}
+      POSTGRES_DB: ${KC_DB_NAME:-keycloak}
+    volumes:
+      - keycloak_db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U keycloak"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # LDAP (OpenLDAP) - base DN dc=whodascompany,dc=local
+  ldap:
+    image: osixia/openldap:1.5.0
+    container_name: whodas-ldap
+    command: --copy-service
+    environment:
+      LDAP_ORGANISATION: Whodas Company
+      LDAP_DOMAIN: whodascompany.local
+      LDAP_ADMIN_PASSWORD: ${LDAP_ADMIN_PASSWORD:-admin}
+      LDAP_TLS: "false"
+    ports:
+      - "389:389"
+    volumes:
+      - ldap_data:/var/lib/ldap
+      - ldap_config:/etc/ldap/slapd.d
+      - ./ldap/bootstrap.ldif:/container/service/slapd/assets/config/bootstrap/ldif/custom/bootstrap.ldif:ro
+    restart: unless-stopped
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:23.0.7
+    container_name: whodas-keycloak
+    command: start-dev
+    environment:
+      KC_DB_USERNAME: ${KC_DB_USERNAME:-keycloak}
+      KC_DB_PASSWORD: ${KC_DB_PASSWORD:-keycloak}
+      KC_DB_NAME: ${KC_DB_NAME:-keycloak}
+      KC_DB_HOST: keycloak-db
+      KC_DB_PORT: 5432
+      KC_PROXY_ENABLED: true
+      KC_PROXY_ADDRESS_FORWARDING: true
+      KEYCLOAK_ADMIN: ${KC_ADMIN_USER:-admin}
+      KEYCLOAK_ADMIN_PASSWORD: ${KC_ADMIN_PASS:-admin}
+    ports:
+      - "8180:8080"
+    depends_on:
+      keycloak-db:
+        condition: service_healthy
+      ldap:
+        condition: service_started
+    restart: unless-stopped
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - ./keycloak-realm.json:/keycloak/realm.json:ro
+      - ./setup-keycloak.js:/setup-keycloak.js:ro
+
+  # Provisioning one-shot del realm whodas-realm (keycloak-realm.json) tramite setup-keycloak.js
+  keycloak-setup:
+    image: node:20-alpine
+    container_name: whodas-keycloak-setup
+    working_dir: /app
+    environment:
+      KEYCLOAK_URL: http://keycloak:8080
+      KC_ADMIN_USER: ${KC_ADMIN_USER:-admin}
+      KC_ADMIN_PASS: ${KC_ADMIN_PASS:-admin}
+      REALM_FILE: /app/keycloak-realm.json
+    command:
+      - sh
+      - -c
+      - until wget -q -O /dev/null http://keycloak:8080/realms/master; do echo "attesa keycloak..."; sleep 5; done; node setup-keycloak.js
+    volumes:
+      - ./keycloak-realm.json:/app/keycloak-realm.json:ro
+      - ./setup-keycloak.js:/app/setup-keycloak.js:ro
+    depends_on:
+      keycloak:
+        condition: service_started
+      ldap:
+        condition: service_started
+    restart: "no"
+
+  # API Gateway
+  gateway:
+    build:
+      context: whodas-gateway
+      dockerfile: Dockerfile
+    container_name: whodas-gateway
+    extra_hosts:
+      - "keycloak:host-gateway"
+    environment:
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_NAME=${DB_NAME:-whodas}
+      - DB_USERNAME=${DB_USERNAME:-postgres}
+      - DB_PASSWORD=${DB_PASSWORD:-postgres}
+      - SERVER_PORT=7001
+      - KEYCLOAK_BASE_URL=http://keycloak:8180
+      - PATIENT_SERVICE_URL=http://patient-service:7002
+      - QUESTIONNAIRE_SERVICE_URL=http://questionnaire-service:7003
+      - ASSESSMENT_SERVICE_URL=http://assessment-service:7004
+      - CERTIFICATE_SERVICE_URL=http://certificate-service:7005
+      - DOCUMENT_SERVICE_URL=http://document-service:7006
+      - NOTIFICATION_SERVICE_URL=http://notification-service:7007
+      - USER_SERVICE_URL=http://user-service:7008
+      - SPRING_CONFIG_ADDITIONAL_LOCATION=file:/config/
+      - LOG_PATH=/app/logs
+    volumes:
+      - ./whodas-gateway/src/main/resources/application.yml:/config/application.yml:ro
+      - ./logs:/app/logs
+    ports:
+      - "7001:7001"
+    depends_on:
+      keycloak:
+        condition: service_started
+      patient-service:
+        condition: service_started
+      questionnaire-service:
+        condition: service_started
+      assessment-service:
+        condition: service_started
+      certificate-service:
+        condition: service_started
+      document-service:
+        condition: service_started
+      notification-service:
+        condition: service_started
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  keycloak_db_data:
+  ldap_data:
+  ldap_config:
+  mailserver_data:
+  mailserver_logs:
+  mailserver_config:

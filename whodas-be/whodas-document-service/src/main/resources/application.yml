@@ -1,0 +1,80 @@
+server:
+  port: 7006
+
+spring:
+  application:
+    name: whodas-document-service
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:whodas}
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:postgres}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+    show-sql: true
+  servlet:
+    multipart:
+      # I documenti WHODAS 2.0 scansionati possono essere pesanti: 20 MB per
+      # documento e 25 MB per la richiesta (i default Spring sono 1 MB / 10 MB).
+      max-file-size: 20MB
+      max-request-size: 25MB
+
+whodas:
+  document:
+    # Servizi interni chiamati dal document service: i dati restano di proprieta'
+    # del servizio che li gestisce, il document service non scrive mai sulle
+    # tabelle altrui, chiama le API REST corrispondenti.
+    clients:
+      patient-url: ${PATIENT_SERVICE_URL:http://localhost:7002}
+      questionnaire-url: ${QUESTIONNAIRE_SERVICE_URL:http://localhost:7003}
+      assessment-url: ${ASSESSMENT_SERVICE_URL:http://localhost:7004}
+      connect-timeout-ms: 3000
+      read-timeout-ms: 15000
+    ocr:
+      # OCR con Tesseract (Tess4J). Serve Tesseract 5 installato sulla macchina e
+      # il modello linguistico italiano in whodas.document.ocr.tessdata-path.
+      # Se il motore non e' disponibile l'import non fallisce: il documento
+      # viene analizzato con l'estrazione del testo e l'OCR viene segnalato
+      # tra gli avvisi del risultato.
+      enabled: true
+      language: ita+eng
+      tessdata-path: ${TESSDATA_PATH:C:/Program Files/Tesseract-OCR/tessdata}
+      dpi: 300
+      max-pages: 20
+    import-defaults:
+      # Valori di default dei parametri della POST /api/v1/documents/import.
+      create-patient-if-missing: true
+      save-assessment: true
+      submit-and-score: true
+      # Soglia minima di risposte riconosciute per lanciare il calcolo del
+      # punteggio WHODAS 2.0 sull'assessment creato.
+      min-answers-to-score: 30
+    template:
+      # Numero massimo di item mostrati per pagina nel modello PDF.
+      items-per-page: 12
+      include-official-number: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+
+logging:
+  file:
+    name: ${LOG_PATH:../logs}/${spring.application.name}.log
+  logback:
+    rollingpolicy:
+      max-file-size: 20MB
+      max-history: 14
+      total-size-cap: 300MB
+  pattern:
+    file: "%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] %logger{36} - %msg%n"
+  level:
+    it.whodas.document: DEBUG
+    org.hibernate.SQL: DEBUG
