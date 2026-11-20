@@ -297,8 +297,10 @@ services:
       KC_DB_NAME: ${KC_DB_NAME:-keycloak}
       KC_DB_HOST: keycloak-db
       KC_DB_PORT: 5432
+      KC_HOSTNAME: localhost
+      KC_HOSTNAME_STRICT: false
+      KC_HOSTNAME_STRICT_BACKCHANNEL: false
       KC_PROXY_ENABLED: true
-      KC_PROXY_ADDRESS_FORWARDING: true
       KEYCLOAK_ADMIN: ${KC_ADMIN_USER:-admin}
       KEYCLOAK_ADMIN_PASSWORD: ${KC_ADMIN_PASS:-admin}
     ports:
@@ -345,8 +347,6 @@ services:
       context: whodas-gateway
       dockerfile: Dockerfile
     container_name: whodas-gateway
-    extra_hosts:
-      - "keycloak:host-gateway"
     environment:
       - DB_HOST=db
       - DB_PORT=5432
@@ -354,7 +354,7 @@ services:
       - DB_USERNAME=${DB_USERNAME:-postgres}
       - DB_PASSWORD=${DB_PASSWORD:-postgres}
       - SERVER_PORT=7001
-      - KEYCLOAK_BASE_URL=http://keycloak:8180
+      - KEYCLOAK_BASE_URL=http://keycloak:8080
       - PATIENT_SERVICE_URL=http://patient-service:7002
       - QUESTIONNAIRE_SERVICE_URL=http://questionnaire-service:7003
       - ASSESSMENT_SERVICE_URL=http://assessment-service:7004
