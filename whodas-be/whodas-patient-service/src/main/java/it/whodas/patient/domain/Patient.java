@@ -71,4 +71,8 @@ public class Patient {
     @Column(name = "notes", columnDefinition = "TEXT")
     @Schema(description = "Notes")
     private String notes;
+
+    @Column(name = "registered_user_uid", length = 100)
+    @Schema(description = "UID dell'utenza registrata proprietaria del paziente (ldap_uid)", example = "testuser")
+    private String registeredUserUid;
 }

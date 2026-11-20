@@ -17,6 +17,7 @@ export interface Patient {
   email?: string;
   healthCondition?: string;
   notes?: string;
+  registeredUserUid?: string;
 }
 
 @Injectable({providedIn: 'root'})

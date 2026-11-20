@@ -1,68 +1,71 @@
+<!-- Top bar (utente, notifiche, logout) -->
 <nav *ngIf="showNavbar" class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top shadow">
   <div class="container-fluid">
-    <a class="navbar-brand d-flex align-items-center" routerLink="/dashboard">
-      <i class="fas fa-stethoscope me-2"></i>
-      <span class="fw-bold">WHODAS 2.0</span>
-    </a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarMain">
-      <ul class="navbar-nav me-auto">
-        <li class="nav-item">
-          <a class="nav-link" routerLink="/dashboard" routerLinkActive="active">
-            <i class="fas fa-home me-1"></i>Dashboard
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" routerLink="/patients" routerLinkActive="active">
-            <i class="fas fa-users me-1"></i> Pazienti
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" routerLink="/questionnaire" routerLinkActive="active">
-            <i class="fas fa-list me-1"></i> Questionario
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" routerLink="/documents" routerLinkActive="active">
-            <i class="fas fa-file-lines me-1"></i> Documenti
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" routerLink="/certificates" routerLinkActive="active">
-            <i class="fas fa-certificate me-1"></i> Certificati
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" routerLink="/users" routerLinkActive="active">
-            <i class="fas fa-users-cog me-1"></i> Utenti
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#" (click)="openGuideline(); $event.preventDefault()">
-            <i class="fas fa-book me-1"></i> Manuale
-          </a>
-        </li>
-      </ul>
-      <div class="d-flex align-items-center">
-        <span class="text-white me-3 small text-nowrap flex-shrink-0 user-badge">
-          <i class="fas fa-user me-1"></i>{{ (authService.currentUserName$ | async) || 'Operatore' }}
-        </span>
-        <app-notification-panel *ngIf="showNavbar"></app-notification-panel>
-        <button class="btn btn-outline-light btn-sm" (click)="logout()">
-          <i class="fas fa-sign-out-alt me-1"></i>Esci
-        </button>
-      </div>
+    <div class="d-flex align-items-center ms-auto">
+      <span class="text-white me-3 small text-nowrap flex-shrink-0 user-badge">
+        <i class="fas fa-user me-1"></i>{{ (authService.currentUserName$ | async) || 'Operatore' }}
+      </span>
+      <app-notification-panel *ngIf="showNavbar"></app-notification-panel>
+      <button class="btn btn-outline-light btn-sm" (click)="logout()">
+        <i class="fas fa-sign-out-alt me-1"></i>Esci
+      </button>
     </div>
   </div>
 </nav>
 
-<div class="container-fluid main-content" [class.login-page]="!showNavbar">
-  <router-outlet></router-outlet>
+<!-- Sidebar sinistra (solo navigazione) -->
+<aside *ngIf="showNavbar" class="sidebar">
+  <div class="sidebar-brand d-flex align-items-center px-3 py-3" routerLink="/dashboard">
+    <i class="fas fa-stethoscope me-2"></i>
+    <span class="fw-bold">WHODAS 2.0</span>
+  </div>
+  <ul class="nav flex-column px-2">
+    <li class="nav-item">
+      <a class="nav-link" routerLink="/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}">
+        <i class="fas fa-home me-2"></i>Dashboard
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" routerLink="/patients" routerLinkActive="active">
+        <i class="fas fa-users me-2"></i> Pazienti
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" routerLink="/questionnaire" routerLinkActive="active">
+        <i class="fas fa-list me-2"></i> Questionario
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" routerLink="/documents" routerLinkActive="active">
+        <i class="fas fa-file-lines me-2"></i> Documenti
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" routerLink="/certificates" routerLinkActive="active">
+        <i class="fas fa-certificate me-2"></i> Certificati
+      </a>
+    </li>
+    <li class="nav-item" *ngIf="canSeeUsers()">
+      <a class="nav-link" routerLink="/users" routerLinkActive="active">
+        <i class="fas fa-users-cog me-2"></i> Utenti
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="#" (click)="openGuideline(); $event.preventDefault()">
+        <i class="fas fa-book me-2"></i> Manuale
+      </a>
+    </li>
+  </ul>
+</aside>
+
+<!-- Contenuto principale -->
+<div class="main-wrapper">
+  <div class="container-fluid main-content" [class.login-page]="!showNavbar">
+    <router-outlet></router-outlet>
+  </div>
 </div>
 
-<footer class="footer bg-dark text-light py-3 mt-auto">
+<footer class="footer bg-dark text-light py-3 mt-auto" [class.login-page]="!showNavbar">
   <div class="container-fluid text-center">
     <span class="small">WHODAS 2.0 Platform &copy; 2026 - Sistema per la somministrazione del questionario WHO Disability Assessment Schedule</span>
   </div>

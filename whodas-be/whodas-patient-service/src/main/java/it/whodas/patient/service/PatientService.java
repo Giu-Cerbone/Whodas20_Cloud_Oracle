@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import it.whodas.common.dto.PatientDto;
 import it.whodas.common.exception.WhodasException;
@@ -23,10 +24,11 @@ public class PatientService {
         this.repository = repository;
     }
 
-    public PatientDto create(PatientDto dto) {
+    public PatientDto create(PatientDto dto, String registeredUserUid) {
         requireNames(dto);
-        if (dto.getFiscalCode() != null && !dto.getFiscalCode().isBlank()
-                && repository.existsByFiscalCode(dto.getFiscalCode())) {
+        if (StringUtils.hasText(registeredUserUid)
+                && dto.getFiscalCode() != null && !dto.getFiscalCode().isBlank()
+                && repository.existsByFiscalCodeAndRegisteredUserUid(dto.getFiscalCode(), registeredUserUid)) {
             throw new WhodasException(
                     "Patient with fiscal code already exists: " + dto.getFiscalCode(),
                     "PATIENT_FISCAL_CODE_EXISTS");
@@ -34,21 +36,22 @@ public class PatientService {
 
         Patient entity = new Patient();
         apply(dto, entity);
+        entity.setRegisteredUserUid(registeredUserUid);
         return toDto(repository.save(entity));
     }
 
-    public PatientDto update(Long id, PatientDto dto) {
-        Patient existing = findEntity(id);
+    public PatientDto update(Long id, PatientDto dto, String registeredUserUid) {
+        Patient existing = findEntity(id, registeredUserUid);
         if (dto.getFirstName() == null || dto.getFirstName().isBlank()) {
             throw new WhodasException("First name is required", "VALIDATION_ERROR");
         }
         if (dto.getLastName() == null || dto.getLastName().isBlank()) {
             throw new WhodasException("Last name is required", "VALIDATION_ERROR");
         }
-        // Un cambio di codice fiscale deve restare unico.
-        if (dto.getFiscalCode() != null && !dto.getFiscalCode().isBlank()
+        if (StringUtils.hasText(registeredUserUid)
+                && dto.getFiscalCode() != null && !dto.getFiscalCode().isBlank()
                 && !dto.getFiscalCode().equals(existing.getFiscalCode())
-                && repository.existsByFiscalCode(dto.getFiscalCode())) {
+                && repository.existsByFiscalCodeAndRegisteredUserUid(dto.getFiscalCode(), registeredUserUid)) {
             throw new WhodasException(
                     "Patient with fiscal code already exists: " + dto.getFiscalCode(),
                     "PATIENT_FISCAL_CODE_EXISTS");
@@ -57,38 +60,48 @@ public class PatientService {
         return toDto(repository.save(existing));
     }
 
-    public PatientDto findById(Long id) {
-        return toDto(findEntity(id));
+    public PatientDto findById(Long id, String registeredUserUid) {
+        return toDto(findEntity(id, registeredUserUid));
     }
 
-    public PatientDto findByFiscalCode(String fiscalCode) {
+    public PatientDto findByFiscalCode(String fiscalCode, String registeredUserUid) {
         Patient patient = repository.findByFiscalCode(fiscalCode);
         if (patient == null) {
+            throw new WhodasException("Patient not found with fiscal code: " + fiscalCode, "PATIENT_NOT_FOUND");
+        }
+        if (StringUtils.hasText(registeredUserUid)
+                && !registeredUserUid.equals(patient.getRegisteredUserUid())) {
             throw new WhodasException("Patient not found with fiscal code: " + fiscalCode, "PATIENT_NOT_FOUND");
         }
         return toDto(patient);
     }
 
-    public List<PatientDto> searchByLastName(String lastName) {
-        return repository.findByLastNameContaining(lastName).stream()
-                .map(this::toDto)
-                .collect(Collectors.toList());
+    public List<PatientDto> searchByLastName(String lastName, String registeredUserUid) {
+        List<Patient> list = StringUtils.hasText(registeredUserUid)
+                ? repository.findByLastNameContainingAndRegisteredUserUid(lastName, registeredUserUid)
+                : repository.findByLastNameContaining(lastName);
+        return list.stream().map(this::toDto).collect(Collectors.toList());
     }
 
-    public List<PatientDto> searchByFirstName(String firstName) {
-        return repository.findByFirstNameContaining(firstName).stream()
-                .map(this::toDto)
-                .collect(Collectors.toList());
+    public List<PatientDto> searchByFirstName(String firstName, String registeredUserUid) {
+        List<Patient> list = StringUtils.hasText(registeredUserUid)
+                ? repository.findByFirstNameContainingAndRegisteredUserUid(firstName, registeredUserUid)
+                : repository.findByFirstNameContaining(firstName);
+        return list.stream().map(this::toDto).collect(Collectors.toList());
     }
 
-    public List<PatientDto> findAll() {
-        return repository.findAll().stream()
-                .map(this::toDto)
-                .collect(Collectors.toList());
+    public List<PatientDto> findAll(String registeredUserUid) {
+        List<Patient> list = StringUtils.hasText(registeredUserUid)
+                ? repository.findAllByRegisteredUserUid(registeredUserUid)
+                : repository.findAll();
+        return list.stream().map(this::toDto).collect(Collectors.toList());
     }
 
-    public void delete(Long id) {
-        if (!repository.existsById(id)) {
+    public void delete(Long id, String registeredUserUid) {
+        boolean exists = StringUtils.hasText(registeredUserUid)
+                ? repository.existsByIdAndRegisteredUserUid(id, registeredUserUid)
+                : repository.existsById(id);
+        if (!exists) {
             throw new WhodasException("Patient not found: " + id, "PATIENT_NOT_FOUND");
         }
         repository.findById(id).ifPresent(repository::delete);
@@ -117,16 +130,15 @@ public class PatientService {
         entity.setNotes(dto.getNotes());
     }
 
-    private Patient findEntity(Long id) {
+    private Patient findEntity(Long id, String registeredUserUid) {
+        if (StringUtils.hasText(registeredUserUid)) {
+            return repository.findByIdAndRegisteredUserUid(id, registeredUserUid)
+                    .orElseThrow(() -> new WhodasException("Patient not found: " + id, "PATIENT_NOT_FOUND"));
+        }
         return repository.findById(id)
                 .orElseThrow(() -> new WhodasException("Patient not found: " + id, "PATIENT_NOT_FOUND"));
     }
 
-    /**
-     * PatientDto.birthDate e' una Stringa (il form HTML la invia come yyyy-MM-dd)
-     * mentre l'entita' usa LocalDate: la conversione va fatta esplicitamente,
-     * altrimenti ModelMapper STRICT scarta il valore e la data si perdeva.
-     */
     private LocalDate parseDate(String value) {
         if (value == null || value.isBlank()) {
             return null;
@@ -157,6 +169,7 @@ public class PatientService {
         dto.setEmail(entity.getEmail());
         dto.setHealthCondition(entity.getHealthCondition());
         dto.setNotes(entity.getNotes());
+        dto.setRegisteredUserUid(entity.getRegisteredUserUid());
         return dto;
     }
 }

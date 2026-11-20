@@ -64,3 +64,36 @@ ALTER TABLE patients
 ALTER TABLE patients
     ADD CONSTRAINT chk_patients_fiscal_code
     CHECK (fiscal_code IS NULL OR btrim(fiscal_code) <> '');
+
+-- 7. Collegamento paziente -> utenza registrata (UID dell'utenza, non username).
+--    Aggiunto in modo idempotente per database gia' esistenti.
+ALTER TABLE patients
+    ADD COLUMN IF NOT EXISTS registered_user_uid VARCHAR(100);
+ALTER TABLE patients
+    DROP CONSTRAINT IF EXISTS fk_patients_registered_user;
+ALTER TABLE patients
+    ADD CONSTRAINT fk_patients_registered_user
+    FOREIGN KEY (registered_user_uid) REFERENCES registered_users(ldap_uid);
+CREATE INDEX IF NOT EXISTS idx_patients_registered_user_uid
+    ON patients (registered_user_uid);
+
+-- 8. Collegamento valutazioni e certificati all'utenza registrata (UID dell'utenza).
+ALTER TABLE assessments
+    ADD COLUMN IF NOT EXISTS registered_user_uid VARCHAR(100);
+ALTER TABLE assessments
+    DROP CONSTRAINT IF EXISTS fk_assessments_registered_user;
+ALTER TABLE assessments
+    ADD CONSTRAINT fk_assessments_registered_user
+    FOREIGN KEY (registered_user_uid) REFERENCES registered_users(ldap_uid);
+CREATE INDEX IF NOT EXISTS idx_assessments_registered_user_uid
+    ON assessments (registered_user_uid);
+
+ALTER TABLE certificates
+    ADD COLUMN IF NOT EXISTS registered_user_uid VARCHAR(100);
+ALTER TABLE certificates
+    DROP CONSTRAINT IF EXISTS fk_certificates_registered_user;
+ALTER TABLE certificates
+    ADD CONSTRAINT fk_certificates_registered_user
+    FOREIGN KEY (registered_user_uid) REFERENCES registered_users(ldap_uid);
+CREATE INDEX IF NOT EXISTS idx_certificates_registered_user_uid
+    ON certificates (registered_user_uid);

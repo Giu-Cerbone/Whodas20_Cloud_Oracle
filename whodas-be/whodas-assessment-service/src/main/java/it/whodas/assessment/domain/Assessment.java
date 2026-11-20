@@ -117,4 +117,8 @@ public class Assessment {
     @Column(name = "compile_type_id")
     @Schema(description = "Compile type ID", example = "1")
     private Long compileTypeId;
+
+    @Column(name = "registered_user_uid", length = 100)
+    @Schema(description = "UID dell'utenza registrata proprietaria della valutazione (ldap_uid)", example = "testuser")
+    private String registeredUserUid;
 }

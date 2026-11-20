@@ -60,4 +60,7 @@ public class AssessmentDto {
     /** ID del tipo di compilazione (tab_type_compile_quest). */
     @Schema(description = "Compile type ID", example = "1")
     private Long compileTypeId;
+
+    @Schema(description = "UID dell'utenza registrata proprietaria della valutazione (ldap_uid)", example = "testuser")
+    private String registeredUserUid;
 }

@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import it.whodas.certificate.domain.Certificate;
 import it.whodas.certificate.domain.CertificateDomainScore;
@@ -30,7 +31,7 @@ public class CertificateService {
         this.repository = repository;
     }
 
-    public CertificateDto create(CertificateDto dto) {
+    public CertificateDto create(CertificateDto dto, String registeredUserUid) {
         requireMandatoryFields(dto);
 
         Certificate entity = new Certificate();
@@ -47,6 +48,7 @@ public class CertificateService {
         entity.setDoctorName(dto.getDoctorName());
         entity.setDoctorLicense(dto.getDoctorLicense());
         entity.setNotes(dto.getNotes());
+        entity.setRegisteredUserUid(registeredUserUid);
         LocalDateTime now = LocalDateTime.now();
         entity.setCreatedAt(now);
         entity.setUpdatedAt(now);
@@ -55,32 +57,48 @@ public class CertificateService {
         return toDto(repository.save(entity));
     }
 
-    public CertificateDto findById(Long id) {
-        return toDto(findEntity(id));
+    public CertificateDto findById(Long id, String registeredUserUid) {
+        return toDto(findEntity(id, registeredUserUid));
     }
 
-    public CertificateDto findByCertificateNumber(String certificateNumber) {
+    public CertificateDto findByCertificateNumber(String certificateNumber, String registeredUserUid) {
         Certificate cert = repository.findByCertificateNumber(certificateNumber);
         if (cert == null) {
+            throw new WhodasException("Certificate not found: " + certificateNumber, "CERTIFICATE_NOT_FOUND");
+        }
+        if (StringUtils.hasText(registeredUserUid)
+                && !registeredUserUid.equals(cert.getRegisteredUserUid())) {
             throw new WhodasException("Certificate not found: " + certificateNumber, "CERTIFICATE_NOT_FOUND");
         }
         return toDto(cert);
     }
 
-    public List<CertificateDto> findByPatientId(String patientId) {
-        return repository.findByPatientId(patientId).stream().map(this::toDto).collect(Collectors.toList());
+    public List<CertificateDto> findByPatientId(String patientId, String registeredUserUid) {
+        List<Certificate> list = StringUtils.hasText(registeredUserUid)
+                ? repository.findByPatientIdAndRegisteredUserUid(patientId, registeredUserUid)
+                : repository.findByPatientId(patientId);
+        return list.stream().map(this::toDto).collect(Collectors.toList());
     }
 
-    public List<CertificateDto> findByAssessmentId(Long assessmentId) {
-        return repository.findByAssessmentId(assessmentId).stream().map(this::toDto).collect(Collectors.toList());
+    public List<CertificateDto> findByAssessmentId(Long assessmentId, String registeredUserUid) {
+        List<Certificate> list = StringUtils.hasText(registeredUserUid)
+                ? repository.findByAssessmentIdAndRegisteredUserUid(assessmentId, registeredUserUid)
+                : repository.findByAssessmentId(assessmentId);
+        return list.stream().map(this::toDto).collect(Collectors.toList());
     }
 
-    public List<CertificateDto> findAll() {
-        return repository.findAll().stream().map(this::toDto).collect(Collectors.toList());
+    public List<CertificateDto> findAll(String registeredUserUid) {
+        List<Certificate> list = StringUtils.hasText(registeredUserUid)
+                ? repository.findAllByRegisteredUserUid(registeredUserUid)
+                : repository.findAll();
+        return list.stream().map(this::toDto).collect(Collectors.toList());
     }
 
-    public void delete(Long id) {
-        if (!repository.existsById(id)) {
+    public void delete(Long id, String registeredUserUid) {
+        boolean exists = StringUtils.hasText(registeredUserUid)
+                ? repository.existsByIdAndRegisteredUserUid(id, registeredUserUid)
+                : repository.existsById(id);
+        if (!exists) {
             throw new WhodasException("Certificate not found: " + id, "CERTIFICATE_NOT_FOUND");
         }
         repository.findById(id).ifPresent(repository::delete);
@@ -120,7 +138,11 @@ public class CertificateService {
         return entities;
     }
 
-    private Certificate findEntity(Long id) {
+    private Certificate findEntity(Long id, String registeredUserUid) {
+        if (StringUtils.hasText(registeredUserUid)) {
+            return repository.findByIdAndRegisteredUserUid(id, registeredUserUid)
+                    .orElseThrow(() -> new WhodasException("Certificate not found: " + id, "CERTIFICATE_NOT_FOUND"));
+        }
         return repository.findById(id)
                 .orElseThrow(() -> new WhodasException("Certificate not found: " + id, "CERTIFICATE_NOT_FOUND"));
     }
@@ -165,6 +187,7 @@ public class CertificateService {
         dto.setDoctorName(entity.getDoctorName());
         dto.setDoctorLicense(entity.getDoctorLicense());
         dto.setNotes(entity.getNotes());
+        dto.setRegisteredUserUid(entity.getRegisteredUserUid());
         if (entity.getDomainScores() != null) {
             dto.setDomainScores(entity.getDomainScores().stream().map(ds -> {
                 DomainScoreDto d = new DomainScoreDto();

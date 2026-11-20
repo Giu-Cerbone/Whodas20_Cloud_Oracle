@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import it.whodas.assessment.domain.Assessment;
 import it.whodas.assessment.domain.ItemCatalogEntry;
@@ -45,7 +46,7 @@ public class AssessmentService {
         this.patients = patients;
     }
 
-    public AssessmentDto create(AssessmentDto dto) {
+    public AssessmentDto create(AssessmentDto dto, String registeredUserUid) {
         if (dto.getPatientId() == null || dto.getPatientId().isBlank()) {
             throw new WhodasException("Patient ID is required", "VALIDATION_ERROR");
         }
@@ -58,6 +59,7 @@ public class AssessmentService {
         entity.setInterviewer(dto.getInterviewer());
         entity.setNotes(dto.getNotes());
         entity.setCompileTypeId(dto.getCompileTypeId());
+        entity.setRegisteredUserUid(registeredUserUid);
         entity.setResponses(toEntities(dto.getResponses(), entity));
         LocalDateTime now = LocalDateTime.now();
         entity.setCreatedAt(now);
@@ -65,8 +67,8 @@ public class AssessmentService {
         return toDto(repository.save(entity));
     }
 
-    public AssessmentDto update(Long id, AssessmentDto dto) {
-        Assessment existing = findEntity(id);
+    public AssessmentDto update(Long id, AssessmentDto dto, String registeredUserUid) {
+        Assessment existing = findEntity(id, registeredUserUid);
         if (dto.getPatientId() != null && !dto.getPatientId().isBlank()) {
             existing.setPatientId(dto.getPatientId());
         }
@@ -79,7 +81,6 @@ public class AssessmentService {
         if (dto.getCompileTypeId() != null) existing.setCompileTypeId(dto.getCompileTypeId());
 
         if (dto.getResponses() != null) {
-            // Sostituisce l'insieme di risposte: orphanRemoval rimuove le righe orfane.
             existing.getResponses().clear();
             existing.getResponses().addAll(toEntities(dto.getResponses(), existing));
         }
@@ -87,12 +88,15 @@ public class AssessmentService {
         return toDto(repository.save(existing));
     }
 
-    public AssessmentResultDto submitAndScore(Long id) {
-        Assessment assessment = findEntity(id);
+    public AssessmentResultDto submitAndScore(Long id, String registeredUserUid) {
+        Assessment assessment = findEntity(id, registeredUserUid);
+        return scoreAndBuild(assessment);
+    }
 
+    public AssessmentResultDto scoreAndBuild(Assessment assessment) {
         List<ItemResponse> responses = assessment.getResponses();
         if (responses == null || responses.isEmpty()) {
-            throw new WhodasException("No responses found for assessment: " + id, "NO_RESPONSES");
+            throw new WhodasException("No responses found for assessment: " + assessment.getId(), "NO_RESPONSES");
         }
         resolveDomains(responses);
 
@@ -104,8 +108,6 @@ public class AssessmentService {
                 .mapToInt(ItemResponse::getScore)
                 .sum();
 
-        // L'ordine dei domini e' quello canonico di DomainType, cosi' il risultato
-        // e' stabile e non dipende dall'ordine di inserimento delle risposte.
         Map<String, List<ItemResponse>> groupedByDomain = responses.stream()
                 .collect(Collectors.groupingBy(
                         ItemResponse::getDomain,
@@ -150,7 +152,6 @@ public class AssessmentService {
         assessment.setTotalItems(totalItems);
         assessment.setAnsweredItems(answeredItems);
         assessment.setMissingItems(missingItems);
-        // total_score e' il punteggio grezzo complessivo (0..144).
         assessment.setTotalScore((double) rawScore);
         assessment.setOverallSimpleScore((double) rawScore);
         assessment.setOverallComplexScore((double) rawScore);
@@ -176,6 +177,38 @@ public class AssessmentService {
         result.setDomainScores(domainScores);
         result.setInterpretation(saved.getInterpretation());
         return result;
+    }
+
+    public AssessmentDto findById(Long id, String registeredUserUid) {
+        return toDto(findEntity(id, registeredUserUid));
+    }
+
+    public AssessmentDto findByIdUnsafe(Long id) {
+        return toDto(findEntityUnsafe(id));
+    }
+
+    public List<AssessmentDto> findByPatientId(String patientId, String registeredUserUid) {
+        List<Assessment> list = StringUtils.hasText(registeredUserUid)
+                ? repository.findByPatientIdAndRegisteredUserUid(patientId, registeredUserUid)
+                : repository.findByPatientId(patientId);
+        return list.stream().map(this::toDto).collect(Collectors.toList());
+    }
+
+    public List<AssessmentDto> findAll(String registeredUserUid) {
+        List<Assessment> list = StringUtils.hasText(registeredUserUid)
+                ? repository.findAllByRegisteredUserUid(registeredUserUid)
+                : repository.findAll();
+        return list.stream().map(this::toDto).collect(Collectors.toList());
+    }
+
+    public void delete(Long id, String registeredUserUid) {
+        boolean exists = StringUtils.hasText(registeredUserUid)
+                ? repository.existsByIdAndRegisteredUserUid(id, registeredUserUid)
+                : repository.existsById(id);
+        if (!exists) {
+            throw new WhodasException("Assessment not found: " + id, "ASSESSMENT_NOT_FOUND");
+        }
+        repository.findById(id).ifPresent(repository::delete);
     }
 
     private List<ItemResponse> toEntities(List<ItemResponseDto> dtos, Assessment assessment) {
@@ -206,10 +239,6 @@ public class AssessmentService {
         return entities;
     }
 
-    /**
-     * Riempie item_responses.domain con il valore canonico del catalogo.
-     * Senza questo il raggruppamento per dominio falliva e /submit rispondeva 500.
-     */
     private void resolveDomains(List<ItemResponse> responses) {
         for (ItemResponse response : responses) {
             if (response.getDomain() != null && !response.getDomain().isBlank()) {
@@ -272,7 +301,15 @@ public class AssessmentService {
         return "EXTREME";
     }
 
-    private Assessment findEntity(Long id) {
+    private Assessment findEntity(Long id, String registeredUserUid) {
+        if (StringUtils.hasText(registeredUserUid)) {
+            return repository.findByIdAndRegisteredUserUid(id, registeredUserUid)
+                    .orElseThrow(() -> new WhodasException("Assessment not found: " + id, "ASSESSMENT_NOT_FOUND"));
+        }
+        return findEntityUnsafe(id);
+    }
+
+    private Assessment findEntityUnsafe(Long id) {
         return repository.findById(id)
                 .orElseThrow(() -> new WhodasException("Assessment not found: " + id, "ASSESSMENT_NOT_FOUND"));
     }
@@ -291,6 +328,7 @@ public class AssessmentService {
         dto.setUpdatedAt(entity.getUpdatedAt());
         dto.setCompletedAt(entity.getCompletedAt());
         dto.setCompileTypeId(entity.getCompileTypeId());
+        dto.setRegisteredUserUid(entity.getRegisteredUserUid());
         if (entity.getResponses() != null) {
             dto.setResponses(entity.getResponses().stream().map(r -> {
                 ItemResponseDto responseDto = new ItemResponseDto();
@@ -303,28 +341,5 @@ public class AssessmentService {
             }).collect(Collectors.toList()));
         }
         return dto;
-    }
-
-    public AssessmentDto findById(Long id) {
-        return toDto(findEntity(id));
-    }
-
-    public AssessmentResultDto score(Long id) {
-        return submitAndScore(id);
-    }
-
-    public List<AssessmentDto> findByPatientId(String patientId) {
-        return repository.findByPatientId(patientId).stream().map(this::toDto).collect(Collectors.toList());
-    }
-
-    public List<AssessmentDto> findAll() {
-        return repository.findAll().stream().map(this::toDto).collect(Collectors.toList());
-    }
-
-    public void delete(Long id) {
-        if (!repository.existsById(id)) {
-            throw new WhodasException("Assessment not found: " + id, "ASSESSMENT_NOT_FOUND");
-        }
-        repository.findById(id).ifPresent(repository::delete);
     }
 }

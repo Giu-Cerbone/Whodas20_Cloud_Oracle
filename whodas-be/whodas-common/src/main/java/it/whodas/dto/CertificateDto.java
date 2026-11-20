@@ -61,4 +61,7 @@ public class CertificateDto {
 
     @Schema(description = "Domain scores")
     private List<DomainScoreDto> domainScores;
+
+    @Schema(description = "UID dell'utenza registrata proprietaria del certificato (ldap_uid)", example = "testuser")
+    private String registeredUserUid;
 }

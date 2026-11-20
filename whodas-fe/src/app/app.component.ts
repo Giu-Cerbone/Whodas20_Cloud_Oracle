@@ -108,6 +108,11 @@ export class AppComponent implements OnInit, OnDestroy {
     this.router.navigate(['/login']);
   }
 
+  canSeeUsers(): boolean {
+    const u = this.authService.getCurrentUser()?.username;
+    return u === 'whodas_user' || u === 'testuser';
+  }
+
   openGuideline(): void {
     this.showGuideline = true;
   }

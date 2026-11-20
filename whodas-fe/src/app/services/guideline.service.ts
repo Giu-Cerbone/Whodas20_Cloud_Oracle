@@ -23,11 +23,11 @@ export class GuidelineService {
           
           <h3>Obiettivi della Piattaforma</h3>
           <ul>
-            <li><strong>Somministrazione guidata</strong> del questionario a 36 item in tre modalita:
+             <li><strong>Somministrazione guidata</strong> del questionario a 36 item in tre modalità:
                <ul>
-                 <li><strong>Autosomministrato</strong>: il paziente compila il questionario da solo. Note: non e obbligatorio che sia presente il medico curante.</li>
+                 <li><strong>Autosomministrato</strong>: il paziente compila il questionario da solo. Note: non è obbligatorio che sia presente il medico curante.</li>
                  <li><strong>Somministrato da un intervistatore</strong>: un professionista (medico, psicologo, assistente sociale o altro operatore formato) legge le domande e registra le risposte del paziente. Note: le risposte devono comunque provenire dal paziente, eventualmente con l'aiuto di un operatore che spiega le domande.</li>
-                 <li><strong>Proxy</strong>: un familiare, caregiver o altra persona che assiste il paziente risponde al posto suo quando questo non e in grado di farlo adeguatamente. Note: se il paziente ha difficolta cognitive, comunicative o di altro tipo, puo essere utilizzata la compilazione tramite proxy (familiare/caregiver).</li>
+                 <li><strong>Proxy</strong>: un familiare, caregiver o altra persona che assiste il paziente risponde al posto suo quando quest'ultimo non è in grado di farlo adeguatamente. Note: se il paziente ha difficoltà cognitive, comunicative o di altro tipo, può essere utilizzata la compilazione tramite proxy (familiare/caregiver).</li>
                </ul>
              </li>
             <li><strong>Calcolo automatico</strong> dei punteggi per i 6 domini funzionali (Cognizione, Mobilità, Cura di sé, Relazioni, Attività della vita, Partecipazione)</li>

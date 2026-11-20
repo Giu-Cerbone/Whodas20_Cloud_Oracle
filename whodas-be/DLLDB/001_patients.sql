@@ -10,9 +10,17 @@ CREATE TABLE IF NOT EXISTS patients (
     phone VARCHAR(20),
     email VARCHAR(100),
     health_condition TEXT,
-    notes TEXT
+    notes TEXT,
+    registered_user_uid VARCHAR(100)
 );
+
+ALTER TABLE patients
+    DROP CONSTRAINT IF EXISTS fk_patients_registered_user;
+ALTER TABLE patients
+    ADD CONSTRAINT fk_patients_registered_user
+    FOREIGN KEY (registered_user_uid) REFERENCES registered_users(ldap_uid);
 
 CREATE INDEX IF NOT EXISTS idx_patients_fiscal_code ON patients (fiscal_code);
 CREATE INDEX IF NOT EXISTS idx_patients_last_name ON patients (last_name);
 CREATE INDEX IF NOT EXISTS idx_patients_first_name ON patients (first_name);
+CREATE INDEX IF NOT EXISTS idx_patients_registered_user_uid ON patients (registered_user_uid);

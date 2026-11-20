@@ -53,4 +53,7 @@ public class PatientDto {
 
     @Schema(description = "Additional notes")
     private String notes;
+
+    @Schema(description = "UID dell'utenza registrata proprietaria del paziente (ldap_uid)", example = "testuser")
+    private String registeredUserUid;
 }

@@ -19,8 +19,16 @@ CREATE TABLE IF NOT EXISTS assessments (
     answered_items INTEGER,
     missing_items INTEGER,
     interpretation VARCHAR(50),
-    scored_at TIMESTAMP
+    scored_at TIMESTAMP,
+    registered_user_uid VARCHAR(100)
 );
 
 CREATE INDEX IF NOT EXISTS idx_assessments_patient_id ON assessments (patient_id);
 CREATE INDEX IF NOT EXISTS idx_assessments_status ON assessments (status);
+CREATE INDEX IF NOT EXISTS idx_assessments_registered_user_uid ON assessments (registered_user_uid);
+
+ALTER TABLE assessments
+    DROP CONSTRAINT IF EXISTS fk_assessments_registered_user;
+ALTER TABLE assessments
+    ADD CONSTRAINT fk_assessments_registered_user
+    FOREIGN KEY (registered_user_uid) REFERENCES registered_users(ldap_uid);

@@ -92,4 +92,8 @@ public class Certificate {
     @OneToMany(mappedBy = "certificate", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @Schema(description = "Domain scores")
     private List<CertificateDomainScore> domainScores;
+
+    @Column(name = "registered_user_uid", length = 100)
+    @Schema(description = "UID dell'utenza registrata proprietaria del certificato (ldap_uid)", example = "testuser")
+    private String registeredUserUid;
 }

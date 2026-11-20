@@ -14,9 +14,17 @@ CREATE TABLE IF NOT EXISTS certificates (
     doctor_license VARCHAR(50),
     notes TEXT,
     created_at TIMESTAMP,
-    updated_at TIMESTAMP
+    updated_at TIMESTAMP,
+    registered_user_uid VARCHAR(100)
 );
 
 CREATE INDEX IF NOT EXISTS idx_certificates_assessment_id ON certificates (assessment_id);
 CREATE INDEX IF NOT EXISTS idx_certificates_patient_id ON certificates (patient_id);
 CREATE INDEX IF NOT EXISTS idx_certificates_status ON certificates (status);
+CREATE INDEX IF NOT EXISTS idx_certificates_registered_user_uid ON certificates (registered_user_uid);
+
+ALTER TABLE certificates
+    DROP CONSTRAINT IF EXISTS fk_certificates_registered_user;
+ALTER TABLE certificates
+    ADD CONSTRAINT fk_certificates_registered_user
+    FOREIGN KEY (registered_user_uid) REFERENCES registered_users(ldap_uid);

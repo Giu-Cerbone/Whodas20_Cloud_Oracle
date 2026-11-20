@@ -37,7 +37,7 @@
     <div class="card-body py-3">
       <div class="d-flex flex-wrap gap-3" role="tablist">
         <button *ngFor="let domain of domains"
-                class="btn btn-lg px-4 py-4 rounded-pill border-3 shadow-sm transition-all"
+                class="btn btn-sm px-3 py-3 rounded-pill border-2 shadow-sm transition-all"
                 [class.btn-primary]="isCurrentDomain(domain)"
                 [class.btn-outline-primary]="!isCurrentDomain(domain)"
                 [class.bg-success]="isDomainComplete(domain) && !isCurrentDomain(domain)"
@@ -45,7 +45,7 @@
                 [class.shadow-lg]="isCurrentDomain(domain) || isDomainComplete(domain)"
                 (click)="goToDomain(domain)"
                 role="tab"
-                style="min-width: 200px; min-height: 140px;">
+                style="min-width: 110px; min-height: 100px;">
           <div class="d-flex flex-column align-items-center justify-content-between h-100">
             <span class="fw-bold fs-3 lh-1">{{ domain.code }}</span>
             <span class="fw-medium mt-1" [class.text-white]="isCurrentDomain(domain) || isDomainComplete(domain)" [class.text-dark]="!isCurrentDomain(domain) && !isDomainComplete(domain)">{{ domain.label }}</span>
