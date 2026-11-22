@@ -57,6 +57,36 @@ public class AssessmentDto {
     @Schema(description = "Completion timestamp", example = "2024-01-15T11:30:00")
     private LocalDateTime completedAt;
 
+    @Schema(description = "Total score", example = "72.0")
+    private Double totalScore;
+
+    @Schema(description = "Overall percent disability", example = "45.5")
+    private Double overallPercentDisability;
+
+    @Schema(description = "Overall simple score", example = "25.0")
+    private Double overallSimpleScore;
+
+    @Schema(description = "Overall complex score", example = "30.0")
+    private Double overallComplexScore;
+
+    @Schema(description = "Overall average score", example = "2.0")
+    private Double overallAverageScore;
+
+    @Schema(description = "Total items", example = "36")
+    private Integer totalItems;
+
+    @Schema(description = "Answered items", example = "36")
+    private Integer answeredItems;
+
+    @Schema(description = "Missing items", example = "0")
+    private Integer missingItems;
+
+    @Schema(description = "Interpretation", example = "Mild disability")
+    private String interpretation;
+
+    @Schema(description = "Scoring timestamp", example = "2024-01-15T11:30:00")
+    private LocalDateTime scoredAt;
+
     /** ID del tipo di compilazione (tab_type_compile_quest). */
     @Schema(description = "Compile type ID", example = "1")
     private Long compileTypeId;

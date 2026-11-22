@@ -73,22 +73,21 @@
           <div class="row g-3">
             <div class="col-md-3">
               <label class="form-label small fw-bold">Numero certificato</label>
-              <input type="text" class="form-control" name="certificateNumber" [(ngModel)]="form.certificateNumber">
+              <input type="text" class="form-control fw-bold cert-number-input" name="certificateNumber" [(ngModel)]="form.certificateNumber" readonly>
             </div>
             <div class="col-md-3">
               <label class="form-label small fw-bold">Valutazione *</label>
-              <input type="number" class="form-control" name="assessmentId" [(ngModel)]="form.assessmentId"
+              <input type="text" inputmode="numeric" pattern="[0-9]*" class="form-control no-spinner" name="assessmentId" [(ngModel)]="form.assessmentId" (blur)="onAssessmentBlur()" (keydown)="onlyNumbers($event)"
                      [class.is-invalid]="submitted && !form.assessmentId">
             </div>
             <div class="col-md-3">
               <label class="form-label small fw-bold">ID Paziente *</label>
-              <input type="text" class="form-control" name="patientId" [(ngModel)]="form.patientId"
-                     [class.is-invalid]="submitted && !form.patientId?.trim()">
+              <input type="text" inputmode="numeric" pattern="[0-9]*" class="form-control fw-bold no-spinner" name="patientId" [(ngModel)]="form.patientId" (blur)="onPatientIdBlur()" (keydown)="onlyNumbers($event)"
+                     [class.is-invalid]="submitted && !form.patientId">
             </div>
             <div class="col-md-3">
               <label class="form-label small fw-bold">Nome paziente *</label>
-              <input type="text" class="form-control" name="patientName" [(ngModel)]="form.patientName"
-                     [class.is-invalid]="submitted && !form.patientName?.trim()">
+              <input type="text" class="form-control fw-bold" name="patientName" [(ngModel)]="form.patientName" readonly>
             </div>
             <div class="col-md-3">
               <label class="form-label small fw-bold">Data emissione</label>
@@ -108,11 +107,11 @@
             </div>
             <div class="col-md-2">
               <label class="form-label small fw-bold">Disabilità %</label>
-              <input type="number" step="1" min="0" class="form-control" name="overallPercentDisability" [(ngModel)]="form.overallPercentDisability">
+              <input type="number" step="1" min="0" class="form-control fw-bold" name="overallPercentDisability" [(ngModel)]="form.overallPercentDisability" readonly>
             </div>
             <div class="col-md-2">
               <label class="form-label small fw-bold">Punteggio complesso</label>
-              <input type="number" step="0.01" class="form-control" name="overallComplexScore" [(ngModel)]="form.overallComplexScore">
+              <input type="number" step="0.01" class="form-control fw-bold" name="overallComplexScore" [(ngModel)]="form.overallComplexScore" readonly>
             </div>
             <div class="col-md-4">
               <label class="form-label small fw-bold">Ente certificatore</label>
@@ -155,8 +154,9 @@
           <div class="modal-body">
             <div class="row g-3">
               <div class="col-md-3"><div class="detail-label">ID</div>{{ selected.id }}</div>
-              <div class="col-md-3"><div class="detail-label">Valutazione</div>{{ selected.assessmentId }}</div>
+              <div class="col-md-3"><div class="detail-label">Numero certificato</div><strong>{{ selected.certificateNumber || '-' }}</strong></div>
               <div class="col-md-3"><div class="detail-label">Paziente</div>{{ selected.patientName }}</div>
+              <div class="col-md-3"><div class="detail-label">Valutazione</div>{{ selected.assessmentId }}</div>
               <div class="col-md-3"><div class="detail-label">Stato</div><span class="badge" [ngClass]="statusClass(selected.status)">{{ selected.status }}</span></div>
               <div class="col-md-3"><div class="detail-label">Data emissione</div>{{ (selected.issueDate | date:'dd/MM/yyyy') || '-' }}</div>
               <div class="col-md-3"><div class="detail-label">Valido fino al</div>{{ (selected.validUntil | date:'dd/MM/yyyy') || '-' }}</div>

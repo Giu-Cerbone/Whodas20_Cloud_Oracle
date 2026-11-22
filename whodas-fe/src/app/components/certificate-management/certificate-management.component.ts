@@ -7,6 +7,7 @@ import { CeilValuePipe } from '../../pipes/ceil-value.pipe';
 import { Certificate, CertificateService } from '../../services/certificate.service';
 import { ErrorModalService } from '../../services/error-modal.service';
 import { PatientService } from '../../services/patient.service';
+import { Assessment, AssessmentService } from '../../services/assessment.service';
 
 type SortDirection = 'asc' | 'desc' | '';
 
@@ -50,7 +51,8 @@ export class CertificateManagementComponent implements OnInit {
   constructor(
     private certificateService: CertificateService,
     private errorModalService: ErrorModalService,
-    private patientService: PatientService
+    private patientService: PatientService,
+    private assessmentService: AssessmentService
   ) {}
 
   ngOnInit(): void {
@@ -229,6 +231,58 @@ export class CertificateManagementComponent implements OnInit {
     this.form = { status: 'ISSUED' };
     this.submitted = false;
     this.formVisible = true;
+    this.certificateService.getNextCertificateNumber().subscribe({
+      next: nextNum => this.form.certificateNumber = nextNum,
+      error: () => {}
+    });
+  }
+
+  onAssessmentBlur(): void {
+    const value = this.form.assessmentId;
+    if (value) {
+      const assessmentIdNum = Number(value);
+      if (!isNaN(assessmentIdNum)) {
+        this.assessmentService.findById(assessmentIdNum).subscribe({
+          next: (assessment: Assessment) => {
+            this.form.patientId = assessment.patientId;
+            this.form.overallPercentDisability = assessment.overallPercentDisability !== undefined
+              ? Math.floor(assessment.overallPercentDisability * 100) / 100
+              : undefined;
+            this.form.overallComplexScore = assessment.overallComplexScore;
+            // Fetch patient name separately
+            if (assessment.patientId) {
+              const patientIdNum = Number(assessment.patientId);
+              if (!isNaN(patientIdNum)) {
+                this.patientService.findById(patientIdNum).subscribe({
+                  next: (patient) => this.form.patientName = `${patient.firstName || ''} ${patient.lastName || ''}`.trim(),
+                  error: () => {}
+                });
+              }
+            }
+          },
+          error: () => this.errorModalService.showError('Impossibile caricare i dati della valutazione')
+        });
+      }
+    } else {
+      this.form.patientId = '';
+      this.form.patientName = '';
+      this.form.overallPercentDisability = undefined;
+      this.form.overallComplexScore = undefined;
+    }
+  }
+
+  onPatientIdBlur(): void {
+    if (this.form.patientId) {
+      const patientIdNum = Number(this.form.patientId);
+      if (!isNaN(patientIdNum)) {
+        this.patientService.findById(patientIdNum).subscribe({
+          next: (patient) => this.form.patientName = `${patient.firstName || ''} ${patient.lastName || ''}`.trim(),
+          error: () => this.errorModalService.showError('Paziente non trovato')
+        });
+      }
+    } else {
+      this.form.patientName = '';
+    }
   }
 
   onEdit(certificate: Certificate): void {
@@ -251,7 +305,17 @@ export class CertificateManagementComponent implements OnInit {
   }
 
   private isFormValid(): boolean {
-    return !!this.form.assessmentId && !!this.form.patientId?.trim() && !!this.form.patientName?.trim();
+    return !!this.form.assessmentId;
+  }
+
+  onlyNumbers(event: KeyboardEvent): void {
+    const allowedKeys = ['Backspace', 'Tab', 'ArrowLeft', 'ArrowRight', 'Delete', 'Home', 'End'];
+    if (allowedKeys.includes(event.key)) {
+      return;
+    }
+    if (!/^\d$/.test(event.key)) {
+      event.preventDefault();
+    }
   }
 
   onSave(): void {

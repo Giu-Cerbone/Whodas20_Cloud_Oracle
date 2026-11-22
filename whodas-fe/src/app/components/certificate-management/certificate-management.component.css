@@ -62,3 +62,26 @@
   margin-left: 0.25rem;
   font-size: 0.75rem;
 }
+
+.cert-number-input {
+  border: none !important;
+  background-color: #e8f5e9 !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+.cert-number-input:focus {
+  border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+.no-spinner::-webkit-outer-spin-button,
+.no-spinner::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.no-spinner[type=number] {
+  -moz-appearance: textfield;
+}

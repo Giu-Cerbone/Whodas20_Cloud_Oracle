@@ -218,6 +218,7 @@
               <table class="table table-hover table-sm mb-0">
                 <thead class="table-light">
                   <tr>
+                    <th scope="col">ID</th>
                     <th scope="col">Data</th>
                     <th scope="col">Stato</th>
                     <th scope="col">Versione</th>
@@ -229,6 +230,7 @@
                 <tbody>
                   @for (assessment of patientAssessments; track trackByAssessmentId($index, assessment)) {
                     <tr>
+                      <td class="fw-bold font-monospace">{{ assessment.id }}</td>
                       <td>{{ formatDate(assessment.updatedAt) || formatDate(assessment.createdAt) }}</td>
                       <td>
                         <span class="badge" [class]="getStatusBadgeClass(assessment.status)">

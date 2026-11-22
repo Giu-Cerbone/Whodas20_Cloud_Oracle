@@ -327,6 +327,16 @@ public class AssessmentService {
         dto.setCreatedAt(entity.getCreatedAt());
         dto.setUpdatedAt(entity.getUpdatedAt());
         dto.setCompletedAt(entity.getCompletedAt());
+        dto.setTotalScore(entity.getTotalScore());
+        dto.setOverallPercentDisability(entity.getOverallPercentDisability());
+        dto.setOverallSimpleScore(entity.getOverallSimpleScore());
+        dto.setOverallComplexScore(entity.getOverallComplexScore());
+        dto.setOverallAverageScore(entity.getOverallAverageScore());
+        dto.setTotalItems(entity.getTotalItems());
+        dto.setAnsweredItems(entity.getAnsweredItems());
+        dto.setMissingItems(entity.getMissingItems());
+        dto.setInterpretation(entity.getInterpretation());
+        dto.setScoredAt(entity.getScoredAt());
         dto.setCompileTypeId(entity.getCompileTypeId());
         dto.setRegisteredUserUid(entity.getRegisteredUserUid());
         if (entity.getResponses() != null) {

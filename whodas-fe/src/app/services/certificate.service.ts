@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { DomainScore } from './assessment.service';
 
@@ -58,5 +59,43 @@ export class CertificateService {
 
   delete(id: number): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/${id}`);
+  }
+
+  getNextCertificateNumber(): Observable<string> {
+    return this.getAll().pipe(
+      map(certs => {
+        const currentYear = new Date().getFullYear();
+        if (!certs.length) {
+          return `WHODAS-${currentYear}-0001`;
+        }
+        const sorted = [...certs].sort((a, b) => {
+          const numA = this.extractSequenceNumber(a.certificateNumber);
+          const numB = this.extractSequenceNumber(b.certificateNumber);
+          return numB - numA;
+        });
+        const lastNumber = sorted[0].certificateNumber;
+        const lastYear = this.extractYear(lastNumber);
+        // If year changed, reset sequence to 1
+        if (lastYear !== currentYear) {
+          return `WHODAS-${currentYear}-0001`;
+        }
+        const nextSeq = this.extractSequenceNumber(lastNumber) + 1;
+        // Determine padding length from the longest sequence in the data
+        const maxSeqLen = Math.max(4, ...certs.map(c => this.extractSequenceNumber(c.certificateNumber).toString().length));
+        return `WHODAS-${currentYear}-${nextSeq.toString().padStart(maxSeqLen, '0')}`;
+      })
+    );
+  }
+
+  private extractSequenceNumber(certNum?: string): number {
+    if (!certNum) return 0;
+    const match = certNum.match(/-(\d+)$/);
+    return match ? parseInt(match[1], 10) : 0;
+  }
+
+  private extractYear(certNum?: string): number | null {
+    if (!certNum) return null;
+    const match = certNum.match(/WHODAS-(\d{4})/);
+    return match ? parseInt(match[1], 10) : null;
   }
 }
