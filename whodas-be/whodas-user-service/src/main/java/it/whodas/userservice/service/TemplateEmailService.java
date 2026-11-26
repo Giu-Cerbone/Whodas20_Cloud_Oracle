@@ -70,7 +70,7 @@ public class TemplateEmailService {
                 case "USER_NAME" -> value = fullName;
                 case "APP_NAME" -> value = "WHODAS 2.0";
                 case "ACCOUNT_NAME" -> value = accountName;
-                case "SUPPORT_EMAIL" -> value = "whodas_info@yahoo.com";
+                case "SUPPORT_EMAIL" -> value = "whodas_info@12909883.brevosend.com";
                 case "YEAR" -> value = "2026";
                 default -> value = m.group(0);
             }
