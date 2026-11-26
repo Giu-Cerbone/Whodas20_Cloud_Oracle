@@ -35,7 +35,7 @@ CREATE TABLE IF NOT EXISTS registered_users (
     keycloak_user_id VARCHAR(100),
     registered_at    TIMESTAMP    NOT NULL DEFAULT now(),
     modified_at      TIMESTAMP,
-    password_temporary BOOLEAN NOT NULL DEFAULT FALSE
+    password_temporary BOOLEAN DEFAULT FALSE
 );
 
 -- Vincolo di integrita': stato ammesso
