@@ -22,8 +22,8 @@ services:
   mailserver:
     image: docker.io/mailserver/docker-mailserver:latest
     container_name: whodas-mailserver
-    hostname: mail.whodas.local
-    domainname: whodas.local
+    hostname: mail.whodas20.duckdns.org
+    domainname: whodas20.duckdns.org
     dns:
       - 8.8.8.8
       - 1.1.1.1
@@ -37,7 +37,7 @@ services:
       - ENABLE_RSPAMD=0
       - ENABLE_FAIL2BAN=0
       - ENABLE_POSTGREY=0
-      - OVERRIDE_HOSTNAME=mail.whodas.local
+      - OVERRIDE_HOSTNAME=mail.whodas20.duckdns.org
       - POSTFIX_INET_PROTOCOLS=ipv4
       - SMTP_ONLY=1
       - POSTFIX_MYNETWORKS=127.0.0.0/8 172.18.0.0/16 10.0.0.0/8 192.168.0.0/16
