@@ -246,7 +246,7 @@ services:
       - MAIL_PASSWORD=xsmtpsib-416f7a7a2346c5fd3b727b94cc25ce15aa05659394436f8671f16b03595e5743-R3newF2aIEyOfbgm
       - APP_EMAIL_ENABLED=true
       - APP_FRONTEND_URL=https://whodas20.duckdns.org
-      - APP_EMAIL_FROM=c4fd3b001@smtp-brevo.com
+      - APP_EMAIL_FROM=whodas_info@12909883.brevosend.com
       - LOG_PATH=/app/logs
     ports:
       - 7008:7008

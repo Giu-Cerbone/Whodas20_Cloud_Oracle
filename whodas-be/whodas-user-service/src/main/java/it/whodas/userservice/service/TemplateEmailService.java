@@ -28,7 +28,7 @@ public class TemplateEmailService {
 
     private final MailServerEmailService mailServerEmailService;
 
-    @Value("${app.email.from:whodas_info@yahoo.com}")
+    @Value("${app.email.from:whodas_info@12909883.brevosend.com}")
     private String fromEmail;
 
     @Value("${app.email.template-path:classpath:email/template_email.xml}")

@@ -18,10 +18,10 @@ spring:
         format_sql: true
     show-sql: true
   mail:
-    host: ${MAIL_HOST:smtp-mail.outlook.com}
+    host: ${MAIL_HOST:smtp-relay.brevo.com}
     port: ${MAIL_PORT:587}
-    username: ${MAIL_USERNAME:giuseppe_cerbone@hotmail.com}
-    password: ${MAIL_PASSWORD:GiuCerbone_1234$}
+    username: ${MAIL_USERNAME:c4fd3b001@smtp-brevo.com}
+    password: ${MAIL_PASSWORD:xsmtpsib-416f7a7a2346c5fd3b727b94cc25ce15aa05659394436f8671f16b03595e5743-R3newF2aIEyOfbgm}
     properties:
       mail:
         smtp:
@@ -35,6 +35,8 @@ spring:
 app:
   email:
     enabled: ${APP_EMAIL_ENABLED:true}
+    from: ${APP_EMAIL_FROM:whodas_info@12909883.brevosend.com}
+    reply-to: ${APP_EMAIL_REPLY_TO:whodas_info@12909883.brevosend.com}
   frontend:
     url: ${APP_FRONTEND_URL:http://localhost}
 
