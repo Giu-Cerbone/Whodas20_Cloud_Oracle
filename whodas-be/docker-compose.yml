@@ -47,7 +47,7 @@ services:
       - POSTFIX_SMTP_SASL_SECURITY_OPTIONS=noanonymous
       - POSTFIX_SMTP_TLS_SECURITY_LEVEL=encrypt
       - POSTFIX_SMTP_TLS_CA_FILE=/etc/ssl/certs/ca-certificates.crt
-      - SASL_PASSWD=[smtp-relay.brevo.com]:587 c4fd3b001@smtp-brevo.com:xsmtpsib-416f7a7a2346c5fd3b727b94cc25ce15aa05659394436f8671f16b03595e5743-R3newF2aIEyOfbgm
+      - SASL_PASSWD=[smtp-relay.brevo.com]:587 c4fd3b001@smtp-brevo.com:xsmtpsib-416f7a7a2346c5fd3b727b94cc25ce15aa05659394436f8671f16b03595e5743-Y4cYC1BUe7b0txpf
       - POSTFIX_RELAY_DOMAINS=*
       - POSTFIX_SMTPD_RELAY_RESTRICTIONS=permit_mynetworks,permit_sasl_authenticated,reject_unauth_destination
     ports:
