@@ -28,7 +28,7 @@ public class TemplateEmailService {
 
     private final MailServerEmailService mailServerEmailService;
 
-    @Value("${app.email.from:whodas_info@12909883.brevosend.com}")
+    @Value("${app.email.from:whodas_info@yahoo.com}")
     private String fromEmail;
 
     @Value("${app.email.template-path:classpath:email/template_email.xml}")
@@ -70,7 +70,7 @@ public class TemplateEmailService {
                 case "USER_NAME" -> value = fullName;
                 case "APP_NAME" -> value = "WHODAS 2.0";
                 case "ACCOUNT_NAME" -> value = accountName;
-                case "SUPPORT_EMAIL" -> value = "whodas_info@12909883.brevosend.com";
+                case "SUPPORT_EMAIL" -> value = "whodas_info@yahoo.com";
                 case "YEAR" -> value = "2026";
                 default -> value = m.group(0);
             }

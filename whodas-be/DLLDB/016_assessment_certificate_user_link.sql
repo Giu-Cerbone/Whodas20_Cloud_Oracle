@@ -62,12 +62,12 @@ WHERE c.registered_user_uid IS NULL
   AND c.patient_id = pu.patient_id_text;
 
 -- Verifica del backfill
-SELECT 'assessments' AS tabella, registered_user_uid, COUNT(*) AS record
+(SELECT 'assessments' AS tabella, registered_user_uid, COUNT(*) AS record
 FROM assessments
 GROUP BY registered_user_uid
-ORDER BY registered_user_uid
+ORDER BY registered_user_uid)
 UNION ALL
-SELECT 'certificates' AS tabella, registered_user_uid, COUNT(*) AS record
+(SELECT 'certificates' AS tabella, registered_user_uid, COUNT(*) AS record
 FROM certificates
 GROUP BY registered_user_uid
-ORDER BY registered_user_uid;
+ORDER BY registered_user_uid);

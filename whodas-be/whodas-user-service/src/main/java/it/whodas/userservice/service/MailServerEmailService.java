@@ -26,7 +26,7 @@ public class MailServerEmailService {
     public MailServerEmailService(
             @Value("${app.mailserver.host:mailserver}") String host,
             @Value("${app.mailserver.port:25}") int port,
-            @Value("${app.email.reply-to:whodas_info@12909883.brevosend.com}") String replyTo) {
+            @Value("${app.email.reply-to:whodas_info@yahoo.com}") String replyTo) {
         JavaMailSenderImpl sender = new JavaMailSenderImpl();
         sender.setHost(host);
         sender.setPort(port);
