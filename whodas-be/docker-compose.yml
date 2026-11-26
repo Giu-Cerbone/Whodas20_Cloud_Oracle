@@ -81,9 +81,9 @@ services:
     environment:
       - DB_HOST=db
       - DB_PORT=5432
-      - DB_NAME=
-      - DB_USERNAME=
-      - DB_PASSWORD=
+      - DB_NAME=whodas
+      - DB_USERNAME=postgres
+      - DB_PASSWORD=whodas_db_2026
       - SERVER_PORT=7002
       - LOG_PATH=/app/logs
     ports:
@@ -104,9 +104,9 @@ services:
     environment:
       - DB_HOST=db
       - DB_PORT=5432
-      - DB_NAME=
-      - DB_USERNAME=
-      - DB_PASSWORD=
+      - DB_NAME=whodas
+      - DB_USERNAME=postgres
+      - DB_PASSWORD=whodas_db_2026
       - SERVER_PORT=7003
       - LOG_PATH=/app/logs
     ports:
@@ -127,9 +127,9 @@ services:
     environment:
       - DB_HOST=db
       - DB_PORT=5432
-      - DB_NAME=
-      - DB_USERNAME=
-      - DB_PASSWORD=
+      - DB_NAME=whodas
+      - DB_USERNAME=postgres
+      - DB_PASSWORD=whodas_db_2026
       - SERVER_PORT=7004
       - LOG_PATH=/app/logs
     ports:
@@ -150,9 +150,9 @@ services:
     environment:
       - DB_HOST=db
       - DB_PORT=5432
-      - DB_NAME=
-      - DB_USERNAME=
-      - DB_PASSWORD=
+      - DB_NAME=whodas
+      - DB_USERNAME=postgres
+      - DB_PASSWORD=whodas_db_2026
       - SERVER_PORT=7005
       - NOTIFICATION_SERVICE_URL=http://notification-service:7007
       - LOG_PATH=/app/logs
@@ -174,9 +174,9 @@ services:
     environment:
       - DB_HOST=db
       - DB_PORT=5432
-      - DB_NAME=
-      - DB_USERNAME=
-      - DB_PASSWORD=
+      - DB_NAME=whodas
+      - DB_USERNAME=postgres
+      - DB_PASSWORD=whodas_db_2026
       - SERVER_PORT=7006
       - PATIENT_SERVICE_URL=http://patient-service:7002
       - QUESTIONNAIRE_SERVICE_URL=http://questionnaire-service:7003
@@ -206,9 +206,9 @@ services:
     environment:
       - DB_HOST=db
       - DB_PORT=5432
-      - DB_NAME=
-      - DB_USERNAME=
-      - DB_PASSWORD=
+      - DB_NAME=whodas
+      - DB_USERNAME=postgres
+      - DB_PASSWORD=whodas_db_2026
       - SERVER_PORT=7007
       - LOG_PATH=/app/logs
     ports:
@@ -229,9 +229,9 @@ services:
     environment:
       - DB_HOST=db
       - DB_PORT=5432
-      - DB_NAME=
-      - DB_USERNAME=
-      - DB_PASSWORD=
+      - DB_NAME=whodas
+      - DB_USERNAME=postgres
+      - DB_PASSWORD=whodas_db_2026
       - SERVER_PORT=7008
       - KEYCLOAK_BASE_URL=http://keycloak:8080
       - KEYCLOAK_REALM=whodas-realm
@@ -358,9 +358,9 @@ services:
     environment:
       - DB_HOST=db
       - DB_PORT=5432
-      - DB_NAME=
-      - DB_USERNAME=
-      - DB_PASSWORD=
+      - DB_NAME=whodas
+      - DB_USERNAME=postgres
+      - DB_PASSWORD=whodas_db_2026
       - SERVER_PORT=7001
       - KEYCLOAK_BASE_URL=http://keycloak:8080
       - PATIENT_SERVICE_URL=http://patient-service:7002
