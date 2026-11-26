@@ -1,0 +1,24 @@
+# WHODAS 2.0 - bootstrap LDAP: OU utenti + utenza seed whodas_user
+# Applicato da osixia/openldap al boot del container (volume ldap_data persistente:
+# se le entry esistono gia' i messaggi "already exists" sono normalizzati).
+dn: ou=users,dc=whodascompany,dc=local
+objectClass: organizationalUnit
+ou: users
+
+dn: uid=whodas_user,ou=users,dc=whodascompany,dc=local
+objectClass: top
+objectClass: person
+objectClass: organizationalPerson
+objectClass: inetOrgPerson
+objectClass: posixAccount
+objectClass: shadowAccount
+uid: whodas_user
+cn: Whodas User
+sn: User
+givenName: Whodas
+mail: whodas_user@prava.lin
+userPassword: whodas_user
+uidNumber: 10000
+gidNumber: 10000
+homeDirectory: /home/whodas_user
+loginShell: /bin/sh

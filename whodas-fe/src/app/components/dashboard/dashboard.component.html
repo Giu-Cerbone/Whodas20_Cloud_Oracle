@@ -1,0 +1,83 @@
+<div class="container-fluid py-4">
+  <div class="row mb-4">
+    <div class="col-12">
+      <h2><i class="fas fa-tachometer-alt me-2 text-primary"></i>Dashboard</h2>
+    </div>
+  </div>
+
+  <div class="row g-4 mb-4">
+    <div class="col-md-4">
+      <div class="card shadow-sm h-100">
+        <div class="card-body text-center">
+          <i class="fas fa-users fa-3x text-primary mb-3"></i>
+          <h3 class="display-4">{{ totalPatients }}</h3>
+          <p class="text-muted mb-0">Pazienti Totali</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card shadow-sm h-100">
+        <div class="card-body text-center">
+          <i class="fas fa-clipboard-list fa-3x text-success mb-3"></i>
+          <h3 class="display-4">{{ totalAssessments }}</h3>
+          <p class="text-muted mb-0">Valutazioni Totali</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card shadow-sm h-100">
+        <div class="card-body text-center">
+          <i class="fas fa-certificate fa-3x text-info mb-3"></i>
+          <h3 class="display-4">{{ totalCertificates }}</h3>
+          <p class="text-muted mb-0">Certificati Emessi</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-4">
+    <div class="col-md-6">
+      <div class="card shadow-sm h-100">
+        <div class="card-header bg-light">
+          <h5 class="mb-0"><i class="fas fa-user-plus me-2"></i>Pazienti Recenti</h5>
+        </div>
+        <div class="card-body p-0">
+          <div class="list-group list-group-flush">
+            <ng-container *ngFor="let patient of recentPatients">
+              <a *ngIf="patient.id" class="list-group-item list-group-item-action" [routerLink]="['/patients/edit', patient.id]">
+                <div class="d-flex w-100 justify-content-between">
+                  <h6 class="mb-1">{{ patient.firstName }} {{ patient.lastName }}</h6>
+                  <small>{{ patient.fiscalCode || '-' }}</small>
+                </div>
+              </a>
+            </ng-container>
+            <div *ngIf="recentPatients.length === 0" class="list-group-item text-center text-muted py-4">
+              Nessun paziente registrato
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="card shadow-sm h-100">
+        <div class="card-header bg-light">
+          <h5 class="mb-0"><i class="fas fa-certificate me-2"></i>Certificati Recenti</h5>
+        </div>
+        <div class="card-body p-0">
+          <div class="list-group list-group-flush">
+            <div *ngFor="let cert of recentCertificates" class="list-group-item">
+              <div class="d-flex w-100 justify-content-between">
+                <h6 class="mb-1">{{ cert.patientName || 'Paziente' }}</h6>
+                <small class="text-muted">{{ (cert.issueDate | date:'dd/MM/yyyy') || '-' }}</small>
+              </div>
+              <small>Disabilità: {{ (cert.overallPercentDisability | ceilValue) ?? '-' }}%</small>
+            </div>
+            <div *ngIf="recentCertificates.length === 0" class="list-group-item text-center text-muted py-4">
+              Nessun certificato emesso
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

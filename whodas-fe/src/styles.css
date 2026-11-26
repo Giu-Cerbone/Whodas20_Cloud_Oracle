@@ -1,0 +1,47 @@
+html,
+body {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+  background: #f8f9fa;
+}
+
+.app-body {
+  min-height: 100vh;
+}
+
+.main-content {
+  flex: 1;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+}
+
+.footer {
+  margin-top: auto;
+}
+
+.fa-sort {
+  color: #6ea8fe;
+}
+
+.table-light,
+.table > thead.table-light > tr > th,
+.table > thead.table-light > tr > td {
+  --bs-table-bg: #cfe2ff;
+  --bs-table-color: #052c65;
+  --bs-table-border-color: #9ec5fe;
+  background-color: #cfe2ff;
+  color: #052c65;
+}
+
+/* Global focus style: very pale blue background on focus */
+input:focus,
+select:focus,
+textarea:focus,
+.form-control:focus,
+.form-select:focus {
+  background-color: #eef4fb !important;
+}

@@ -1,0 +1,78 @@
+<div class="container-fluid py-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>
+      <i class="fas fa-user-plus me-2 text-primary"></i>
+      {{ isEdit ? 'Modifica Paziente' : 'Nuovo Paziente' }}
+    </h2>
+    <button class="btn btn-secondary" type="button" (click)="onCancel()">
+      <i class="fas fa-arrow-left me-2"></i> Indietro
+    </button>
+  </div>
+
+  <form [formGroup]="patientForm" (ngSubmit)="onSubmit()">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label">Nome *</label>
+            <input type="text" class="form-control" formControlName="firstName" [class.is-invalid]="patientForm.get('firstName')?.invalid && patientForm.get('firstName')?.touched">
+            <div class="invalid-feedback">Nome obbligatorio</div>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Cognome *</label>
+            <input type="text" class="form-control" formControlName="lastName" [class.is-invalid]="patientForm.get('lastName')?.invalid && patientForm.get('lastName')?.touched">
+            <div class="invalid-feedback">Cognome obbligatorio</div>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Codice Fiscale</label>
+            <input type="text" class="form-control" formControlName="fiscalCode" maxlength="16">
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Genere</label>
+            <select class="form-control" formControlName="gender">
+              <option value="">Seleziona...</option>
+              <option value="M">Maschio</option>
+              <option value="F">Femmina</option>
+              <option value="Altro">Altro</option>
+            </select>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Data di Nascita</label>
+            <input type="date" class="form-control" formControlName="birthDate">
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Luogo di Nascita</label>
+            <input type="text" class="form-control" formControlName="birthPlace">
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Indirizzo</label>
+            <input type="text" class="form-control" formControlName="address">
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Telefono</label>
+            <input type="tel" class="form-control" formControlName="phone">
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Email</label>
+            <input type="email" class="form-control" formControlName="email">
+          </div>
+          <div class="col-md-12">
+            <label class="form-label">Condizione di Salute</label>
+            <textarea class="form-control" formControlName="healthCondition" rows="2" placeholder="Descrivi la condizione di salute del paziente..."></textarea>
+          </div>
+          <div class="col-md-12">
+            <label class="form-label">Note</label>
+            <textarea class="form-control" formControlName="notes" rows="2" placeholder="Note aggiuntive..."></textarea>
+          </div>
+        </div>
+      </div>
+      <div class="card-footer text-end">
+        <button type="button" class="btn btn-secondary me-2" (click)="onCancel()">Annulla</button>
+        <button type="submit" class="btn btn-primary" [disabled]="patientForm.invalid || saving">
+          <i *ngIf="saving" class="fas fa-spinner fa-spin me-2"></i>
+          {{ isEdit ? 'Salva Modifiche' : 'Crea Paziente' }}
+        </button>
+      </div>
+    </div>
+  </form>
+</div>

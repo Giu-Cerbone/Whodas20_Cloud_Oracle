@@ -1,0 +1,87 @@
+.user-profile-modal .modal-dialog {
+  margin-top: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.user-profile-modal .modal-body {
+  max-height: 82vh;
+  overflow-y: auto;
+  padding: 0.75rem 1rem;
+}
+
+.user-profile-modal .modal-header,
+.user-profile-modal .modal-footer {
+  padding: 0.45rem 0.9rem;
+}
+
+.user-profile-modal .modal-title {
+  font-size: 1.05rem;
+}
+
+.user-profile-modal .password-requirements {
+  line-height: 1.2;
+  font-size: 0.72rem;
+}
+
+.user-profile-modal .form-label.small {
+  text-transform: uppercase;
+  font-size: 0.62rem;
+  letter-spacing: 0.03rem;
+  margin-bottom: 0;
+}
+
+.user-profile-modal .profile-grid {
+  --bs-gutter-y: 0.35rem;
+  --bs-gutter-x: 0.75rem;
+}
+
+.user-profile-modal .profile-grid .fw-semibold {
+  font-size: 0.9rem;
+}
+
+.user-profile-modal hr {
+  margin: 0.45rem 0;
+}
+
+.user-profile-modal .mb-3 {
+  margin-bottom: 0.6rem !important;
+}
+
+.user-profile-modal .form-control {
+  padding: 0.35rem 0.6rem;
+  font-size: 0.9rem;
+}
+
+.user-profile-modal .username-cell {
+  background-color: #eef9ee;
+  border: 1px solid #b9e3b9;
+  border-radius: 0.4rem;
+  padding: 0.25rem 0.5rem;
+}
+
+.user-profile-modal .change-toggle {
+  text-decoration: none;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #0d6efd;
+}
+
+.user-profile-modal .change-toggle:hover {
+  text-decoration: none;
+}
+
+.confirm-backdrop {
+  z-index: 1060;
+}
+
+.confirm-modal {
+  z-index: 1065;
+}
+
+.result-backdrop {
+  z-index: 1070;
+}
+
+.result-modal {
+  z-index: 1075;
+}

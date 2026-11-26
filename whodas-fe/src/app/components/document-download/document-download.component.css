@@ -1,0 +1,32 @@
+.form-label {
+  font-weight: 500;
+}
+
+.patient-result-list {
+  max-height: 220px;
+  overflow-y: auto;
+}
+
+.patient-result {
+  font-size: 0.875rem;
+}
+
+.patient-chip {
+  background-color: #f1fbf5;
+  border: 1px solid #b7e4c7;
+  border-radius: 0.5rem;
+  padding: 0.75rem 1rem;
+}
+
+.summary-card .card-body {
+  background-color: #f8f9fa;
+  border-left: 4px solid #0d6efd;
+}
+
+.summary-title {
+  letter-spacing: 0.05rem;
+}
+
+.spinner-border-sm {
+  vertical-align: -0.15em;
+}

@@ -1,0 +1,379 @@
+<div class="container-fluid py-4">
+  <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+    <h2 class="mb-0"><i class="fas fa-file-lines me-2 text-primary"></i>Gestione Certificati</h2>
+    <button class="btn btn-primary" type="button" (click)="onNew()">
+      <i class="fas fa-plus me-2"></i> Nuovo Certificato
+    </button>
+  </div>
+
+  <!-- Filtri -->
+  <div class="card shadow-sm mb-4 filter-card">
+    <div class="card-header bg-primary-subtle border-0 pb-0">
+<h6 class="mb-0"><i class="fas fa-search me-2 text-primary"></i>Ricerca per Paziente</h6>
+    </div>
+    <div class="card-body">
+      <div class="row g-3 align-items-end">
+        <div class="col-md-3">
+          <label class="form-label small fw-bold">Numero</label>
+          <input type="text" class="form-control" placeholder="Cerca per numero..." name="fNumber"
+                 [(ngModel)]="filters.certificateNumber" (ngModelChange)="onFilterChange()">
+        </div>
+        <div class="col-md-3">
+          <label class="form-label small fw-bold">Paziente</label>
+          <input type="text" class="form-control" placeholder="Cerca per nome paziente..." name="fPatient"
+                 [(ngModel)]="filters.patientName" (ngModelChange)="onFilterChange()">
+        </div>
+        <div class="col-md-3">
+          <label class="form-label small fw-bold">Codice Fiscale</label>
+          <input type="text" class="form-control" placeholder="Cerca per codice fiscale..." name="fFiscal"
+                 [(ngModel)]="filters.fiscalCode" (ngModelChange)="onFilterChange()">
+        </div>
+        <div class="col-md-3">
+          <label class="form-label small fw-bold">Valutazione</label>
+          <input type="text" class="form-control" placeholder="Cerca per n. valutazione..." name="fAssessment"
+                 [(ngModel)]="filters.assessmentId" (ngModelChange)="onFilterChange()">
+        </div>
+        <div class="col-md-3">
+          <label class="form-label small fw-bold">Emissione dal</label>
+          <input type="date" class="form-control" name="fFrom"
+                 [(ngModel)]="filters.issueDateFrom" (ngModelChange)="onFilterChange()">
+        </div>
+        <div class="col-md-3">
+          <label class="form-label small fw-bold">Emissione al</label>
+          <input type="date" class="form-control" name="fTo"
+                 [(ngModel)]="filters.issueDateTo" (ngModelChange)="onFilterChange()">
+        </div>
+        <div class="col-md-3">
+          <label class="form-label small fw-bold">Stato</label>
+          <select class="form-select" name="fStatus" [(ngModel)]="filters.status" (ngModelChange)="onFilterChange()">
+            <option value="">Tutti</option>
+            @for (s of statusOptions; track s) {
+              <option [value]="s">{{ s }}</option>
+            }
+          </select>
+        </div>
+        <div class="col-md-3 d-flex gap-2">
+          <button class="btn btn-outline-secondary flex-fill" type="button" (click)="clearFilters()"
+                  [disabled]="!hasActiveFilters" title="Pulisci filtri">
+            <i class="fas fa-eraser me-1"></i>Pulisci
+          </button>
+          <button class="btn btn-outline-primary" type="button" (click)="loadAll()" title="Ricarica">
+            <i class="fas fa-rotate"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Form modal -->
+  @if (formVisible) {
+    <div class="modal-backdrop fade show"></div>
+    <div class="modal fade show d-block" tabindex="-1" role="dialog" aria-modal="true" (click)="cancelForm()">
+      <div class="modal-dialog modal-xl modal-dialog-scrollable modal-dialog-centered" (click)="$event.stopPropagation()">
+        <div class="modal-content">
+<div class="card-header bg-primary-subtle border-0 pb-0 d-flex justify-content-between align-items-center">
+            <h5 class="mb-0 text-dark"><i class="fas fa-edit me-2"></i>Creazione Inserimento Nuovo Certificato</h5>
+            <button type="button" class="btn btn-outline-secondary btn-sm" (click)="cancelForm()" title="Chiudi" aria-label="Chiudi"><i class="fas fa-times"></i></button>
+          </div>
+          <div class="modal-body">
+            <!-- Ricerca paziente -->
+            <div class="card shadow-sm mb-3">
+              <div class="card-header bg-primary-subtle border-0 pb-0">
+<h6 class="mb-0"><i class="fas fa-search me-2 text-primary"></i>Ricerca Paziente</h6>
+              </div>
+              <div class="card-body">
+                <div class="row g-2 align-items-end mb-2">
+                  <div class="col-md-4">
+                    <label class="form-label small fw-bold">Nome</label>
+                    <input type="text" class="form-control" placeholder="Nome..." [(ngModel)]="patientSearchFirstName">
+                  </div>
+                  <div class="col-md-4">
+                    <label class="form-label small fw-bold">Cognome</label>
+                    <input type="text" class="form-control" placeholder="Cognome..." [(ngModel)]="patientSearchLastName">
+                  </div>
+                  <div class="col-md-4">
+                    <label class="form-label small fw-bold">Codice Fiscale</label>
+                    <input type="text" class="form-control" placeholder="Codice fiscale..." [(ngModel)]="patientSearchFiscalCode">
+                  </div>
+                  <div class="col-12 d-flex gap-2 mt-2">
+                    <button type="button" class="btn btn-primary flex-fill" (click)="searchPatients()">Cerca</button>
+                    <button type="button" class="btn btn-outline-secondary" (click)="patientSearchResults=[];patientSearchFirstName='';patientSearchLastName='';patientSearchFiscalCode=''">Pulisci</button>
+                  </div>
+                </div>
+                @if (patientSearchResults.length) {
+                  <div class="border rounded p-2 mt-2">
+                    <div class="rounded px-2 py-1 mb-2" style="background-color:#e8f5e9">
+                      <h6 class="mb-0 text-dark">Risultato Paziente Cercato</h6>
+                    </div>
+                    <div class="table-responsive" style="max-height:200px">
+<table class="table table-sm table-hover mb-0 small">
+                      <thead class="table-light"><tr><th>ID</th><th>Nome</th><th>Cognome</th><th>C.F.</th><th></th></tr></thead>
+                      <tbody>
+                        @for (p of paginatedPatientResults; track p.id) {
+                          <tr>
+                            <td>{{ p.id }}</td>
+                            <td>{{ p.firstName }}</td>
+                            <td>{{ p.lastName }}</td>
+                            <td>{{ p.fiscalCode || '-' }}</td>
+                            <td class="text-end"><button type="button" class="btn btn-sm btn-outline-primary" (click)="selectPatient(p)">Seleziona</button></td>
+                          </tr>
+                        }
+                      </tbody>
+                    </table>
+                  </div>
+                  @if (totalPatientResultPages > 1) {
+                    <div class="d-flex justify-content-between align-items-center mt-2">
+                      <button type="button" class="btn btn-sm btn-outline-secondary" (click)="patientPrevPage()" [disabled]="patientResultPage===1">Prev</button>
+                      <span class="small">{{ patientResultPage }} / {{ totalPatientResultPages }}</span>
+                      <button type="button" class="btn btn-sm btn-outline-secondary" (click)="patientNextPage()" [disabled]="patientResultPage===totalPatientResultPages">Next</button>
+                    </div>
+                  }
+                  </div>
+                }
+              </div>
+            </div>
+            <div class="border rounded p-3">
+              <div class="bg-primary-subtle rounded px-2 py-1 mb-3">
+                <h6 class="mb-0 text-dark"><i class="fas fa-edit me-2"></i>{{ editingId != null ? 'Modifica Certificato' : 'Nuovo Certificato' }}</h6>
+              </div>
+            <form (ngSubmit)="onSave()" #certForm="ngForm" novalidate>
+              <div class="row g-3">
+                <div class="col-md-3">
+                  <label class="form-label small fw-bold">Numero certificato</label>
+                  <input type="text" class="form-control fw-bold cert-number-input" name="certificateNumber" [(ngModel)]="form.certificateNumber" readonly>
+                </div>
+                <div class="col-md-3">
+                  <label class="form-label small fw-bold">Valutazione *</label>
+                  <input type="text" inputmode="numeric" pattern="[0-9]*" class="form-control fw-bold no-spinner" name="assessmentId" [(ngModel)]="form.assessmentId" (blur)="onAssessmentBlur()" (keydown)="onlyNumbers($event)"
+                         [class.is-invalid]="submitted && !form.assessmentId">
+                </div>
+<div class="col-md-3">
+                   <label class="form-label small fw-bold">ID Paziente *</label>
+                   <input type="text" inputmode="numeric" pattern="[0-9]*" class="form-control fw-bold no-spinner" name="patientId" [(ngModel)]="form.patientId" (blur)="onPatientIdBlur()" (keydown)="onlyNumbers($event)"
+                          [class.is-invalid]="submitted && !form.patientId">
+                 </div>
+<div class="col-md-3">
+                   <label class="form-label small fw-bold">Nome paziente *</label>
+                   <input type="text" class="form-control fw-bold" name="patientName" [(ngModel)]="form.patientName" readonly>
+                 </div>
+                 <div class="col-md-3">
+                   <label class="form-label small fw-bold">Data emissione</label>
+                   <input type="date" class="form-control" name="issueDate" [(ngModel)]="form.issueDate">
+                 </div>
+                <div class="col-md-3">
+                  <label class="form-label small fw-bold">Valido fino al</label>
+                  <input type="date" class="form-control" name="validUntil" [(ngModel)]="form.validUntil">
+                </div>
+                <div class="col-md-2">
+                  <label class="form-label small fw-bold">Stato</label>
+                  <select class="form-select" name="status" [(ngModel)]="form.status">
+                    @for (s of statusOptions; track s) {
+                      <option [value]="s">{{ s }}</option>
+                    }
+                  </select>
+                </div>
+                <div class="col-md-2">
+                  <label class="form-label small fw-bold">Disabilità %</label>
+                  <input type="number" step="1" min="0" class="form-control fw-bold" name="overallPercentDisability" [(ngModel)]="form.overallPercentDisability" readonly>
+                </div>
+                <div class="col-md-2">
+                  <label class="form-label small fw-bold">Punteggio complesso</label>
+                  <input type="number" step="0.01" class="form-control fw-bold" name="overallComplexScore" [(ngModel)]="form.overallComplexScore" readonly>
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label small fw-bold">Ente certificatore</label>
+                  <input type="text" class="form-control" name="certifyingBody" [(ngModel)]="form.certifyingBody">
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label small fw-bold">Medico</label>
+                  <input type="text" class="form-control" name="doctorName" [(ngModel)]="form.doctorName">
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label small fw-bold">N. albo medico</label>
+                  <input type="text" class="form-control" name="doctorLicense" [(ngModel)]="form.doctorLicense">
+                </div>
+                <div class="col-12">
+                  <label class="form-label small fw-bold">Note</label>
+                  <textarea class="form-control" rows="2" name="notes" [(ngModel)]="form.notes"></textarea>
+                </div>
+              </div>
+              <div class="mt-3 d-flex gap-2 justify-content-end">
+                <button type="button" class="btn btn-outline-secondary" (click)="cancelForm()">Annulla</button>
+                <button type="submit" class="btn btn-primary" [disabled]="isSaving">
+                  <i class="fas fa-save me-1"></i>Salva
+                </button>
+              </div>
+            </form>
+          </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Dettaglio -->
+  @if (selected) {
+    <div class="modal-backdrop fade show"></div>
+    <div class="modal fade show d-block" tabindex="-1" role="dialog" aria-modal="true" (click)="closeDetail()">
+      <div class="modal-dialog modal-xl modal-dialog-scrollable modal-dialog-centered" (click)="$event.stopPropagation()">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title"><i class="fas fa-file-lines me-2"></i>Dettaglio certificato {{ selected.certificateNumber }}</h5>
+            <button type="button" class="btn-close" (click)="closeDetail()" aria-label="Chiudi"></button>
+          </div>
+          <div class="modal-body">
+            <div class="row g-3">
+              <div class="col-md-3"><div class="detail-label">ID</div>{{ selected.id }}</div>
+              <div class="col-md-3"><div class="detail-label">Numero certificato</div><strong>{{ selected.certificateNumber || '-' }}</strong></div>
+              <div class="col-md-3"><div class="detail-label">Paziente</div>{{ selected.patientName }}</div>
+              <div class="col-md-3"><div class="detail-label">Valutazione</div>{{ selected.assessmentId }}</div>
+              <div class="col-md-3"><div class="detail-label">Stato</div><span class="badge" [ngClass]="statusClass(selected.status)">{{ selected.status }}</span></div>
+              <div class="col-md-3"><div class="detail-label">Data emissione</div>{{ (selected.issueDate | date:'dd/MM/yyyy') || '-' }}</div>
+              <div class="col-md-3"><div class="detail-label">Valido fino al</div>{{ (selected.validUntil | date:'dd/MM/yyyy') || '-' }}</div>
+              <div class="col-md-3"><div class="detail-label">Disabilità %</div>{{ (selected.overallPercentDisability | ceilValue) ?? '-' }}</div>
+              <div class="col-md-3"><div class="detail-label">Punteggio complesso</div>{{ (selected.overallComplexScore | ceilValue) ?? '-' }}</div>
+              <div class="col-md-4"><div class="detail-label">Ente certificatore</div>{{ selected.certifyingBody || '-' }}</div>
+              <div class="col-md-4"><div class="detail-label">Medico</div>{{ selected.doctorName || '-' }}</div>
+              <div class="col-md-4"><div class="detail-label">N. albo medico</div>{{ selected.doctorLicense || '-' }}</div>
+              <div class="col-12"><div class="detail-label">Note</div>{{ selected.notes || '-' }}</div>
+            </div>
+
+            @if (selected.domainScores?.length) {
+              <h6 class="mt-4">Punteggi per dominio</h6>
+              <div class="table-responsive">
+                <table class="table table-sm table-hover mb-0">
+                  <thead class="table-light">
+                    <tr>
+                      <th>Dominio</th>
+                      <th class="text-end">Item</th>
+                      <th class="text-end">Grezzo</th>
+                      <th class="text-end">Medio</th>
+                      <th class="text-end">Semplice</th>
+                      <th class="text-end">Complesso</th>
+                      <th class="text-end">Disabilità %</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (d of selected.domainScores; track d.domain) {
+                      <tr>
+                        <td>{{ d.domainLabelIt || d.domainLabel || d.domain }}</td>
+                        <td class="text-end">{{ d.itemCount ?? '-' }}</td>
+                        <td class="text-end">{{ (d.rawScore | ceilValue) ?? '-' }}</td>
+                        <td class="text-end">{{ (d.averageScore | ceilValue) ?? '-' }}</td>
+                        <td class="text-end">{{ (d.simpleScore | ceilValue) ?? '-' }}</td>
+                        <td class="text-end">{{ (d.complexScore | ceilValue) ?? '-' }}</td>
+                        <td class="text-end">{{ (d.percentDisability | ceilValue) ?? '-' }}</td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+            }
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" (click)="closeDetail()">Chiudi</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Elenco -->
+  <div class="card shadow-sm">
+    <div class="card-body p-0">
+      @if (isLoading) {
+        <div class="text-center py-5">
+          <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Caricamento...</span>
+          </div>
+          <p class="mt-2 text-muted">Caricamento certificati...</p>
+        </div>
+      } @else {
+        <div class="table-responsive">
+          <table class="table table-hover mb-0 sortable-table">
+            <thead class="table-light">
+              <tr>
+                <th scope="col" (click)="onSort('certificateNumber')" class="sortable" [class.sorted]="sortState.column === 'certificateNumber'">Numero <i class="fas" [class]="getSortIcon('certificateNumber')"></i></th>
+                <th scope="col" (click)="onSort('patientName')" class="sortable" [class.sorted]="sortState.column === 'patientName'">Paziente <i class="fas" [class]="getSortIcon('patientName')"></i></th>
+                <th scope="col" (click)="onSort('fiscalCode')" class="sortable" [class.sorted]="sortState.column === 'fiscalCode'">Codice Fiscale <i class="fas" [class]="getSortIcon('fiscalCode')"></i></th>
+                <th scope="col" (click)="onSort('assessmentId')" class="sortable" [class.sorted]="sortState.column === 'assessmentId'">Valutazione <i class="fas" [class]="getSortIcon('assessmentId')"></i></th>
+                <th scope="col" (click)="onSort('issueDate')" class="sortable" [class.sorted]="sortState.column === 'issueDate'">Emissione <i class="fas" [class]="getSortIcon('issueDate')"></i></th>
+                <th scope="col" (click)="onSort('validUntil')" class="sortable" [class.sorted]="sortState.column === 'validUntil'">Valido fino al <i class="fas" [class]="getSortIcon('validUntil')"></i></th>
+                <th scope="col" (click)="onSort('status')" class="sortable" [class.sorted]="sortState.column === 'status'">Stato <i class="fas" [class]="getSortIcon('status')"></i></th>
+                <th scope="col" (click)="onSort('overallPercentDisability')" class="sortable text-end" [class.sorted]="sortState.column === 'overallPercentDisability'">Disabilità % <i class="fas" [class]="getSortIcon('overallPercentDisability')"></i></th>
+                <th class="text-center">Azioni</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (c of paginatedCertificates; track trackById($index, c)) {
+                <tr>
+                  <td>{{ c.certificateNumber || '-' }}</td>
+                  <td>{{ c.patientName }}</td>
+                  <td>{{ fiscalCodeOf(c) || '-' }}</td>
+                  <td>{{ c.assessmentId }}</td>
+                  <td>{{ (c.issueDate | date:'dd/MM/yyyy') || '-' }}</td>
+                  <td>{{ (c.validUntil | date:'dd/MM/yyyy') || '-' }}</td>
+                  <td><span class="badge" [ngClass]="statusClass(c.status)">{{ c.status || '-' }}</span></td>
+                  <td class="text-end">{{ (c.overallPercentDisability | ceilValue) ?? '-' }}</td>
+                  <td class="text-center">
+                     <div class="btn-group btn-group-sm" role="group">
+                       <button class="btn btn-outline-secondary" type="button" (click)="onView(c)" title="Dettaglio" aria-label="Dettaglio">
+                         <i class="fas fa-eye"></i>
+                       </button>
+                       <button class="btn btn-outline-danger" type="button" (click)="onDelete(c)" title="Elimina" aria-label="Elimina">
+                         <i class="fas fa-trash"></i>
+                       </button>
+                     </div>
+                  </td>
+                </tr>
+              } @empty {
+                <tr>
+                  <td colspan="9" class="text-center py-4 text-muted">
+                    <i class="fas fa-search fa-2x mb-2 d-block opacity-50"></i>
+                    Nessun certificato trovato
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+        <nav class="px-3 py-2 border-top" aria-label="Paginazione certificati">
+          <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <div class="small text-muted">
+              Mostrando {{ firstItemIndex }} - {{ lastItemIndex }} di {{ totalItems }} certificati
+            </div>
+            @if (totalPages > 1) {
+              <ul class="pagination pagination-sm mb-0">
+                <li class="page-item" [class.disabled]="currentPage === 1">
+                  <button class="page-link" type="button" (click)="onPageChange(1)" [disabled]="currentPage === 1" aria-label="Prima pagina">
+                    <i class="fas fa-angle-double-left"></i>
+                  </button>
+                </li>
+                <li class="page-item" [class.disabled]="currentPage === 1">
+                  <button class="page-link" type="button" (click)="onPageChange(currentPage - 1)" [disabled]="currentPage === 1" aria-label="Pagina precedente">
+                    <i class="fas fa-angle-left"></i>
+                  </button>
+                </li>
+                @for (p of pages; track p) {
+                  <li class="page-item" [class.active]="p === currentPage">
+                    <button class="page-link" type="button" (click)="onPageChange(p)">{{ p }}</button>
+                  </li>
+                }
+                <li class="page-item" [class.disabled]="currentPage === totalPages">
+                  <button class="page-link" type="button" (click)="onPageChange(currentPage + 1)" [disabled]="currentPage === totalPages" aria-label="Pagina successiva">
+                    <i class="fas fa-angle-right"></i>
+                  </button>
+                </li>
+                <li class="page-item" [class.disabled]="currentPage === totalPages">
+                  <button class="page-link" type="button" (click)="onPageChange(totalPages)" [disabled]="currentPage === totalPages" aria-label="Ultima pagina">
+                    <i class="fas fa-angle-double-right"></i>
+                  </button>
+                </li>
+              </ul>
+            }
+          </div>
+        </nav>
+      }
+    </div>
+  </div>
+</div>

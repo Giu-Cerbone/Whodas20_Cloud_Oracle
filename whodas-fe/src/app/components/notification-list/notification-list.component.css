@@ -1,0 +1,101 @@
+.notification-page {
+  padding: 1rem 0;
+}
+
+.notification-row {
+  transition: background-color 0.15s ease;
+  cursor: pointer;
+}
+
+.notification-page .list-group-item.notification-row.unread {
+  --bs-list-group-bg: #eafaf1;
+  background-color: #eafaf1 !important;
+  border-left: 3px solid #28a745;
+}
+
+.notification-page .list-group-item.notification-row.read {
+  --bs-list-group-bg: #eaf2ff;
+  background-color: #eaf2ff !important;
+}
+
+.notification-page .list-group-item.notification-row.deleted {
+  --bs-list-group-bg: #fdeaea;
+  background-color: #fdeaea !important;
+  opacity: 0.85;
+}
+
+.notification-page .list-group-item.notification-row.unread:hover {
+  --bs-list-group-bg: #dcf5e7;
+  background-color: #dcf5e7 !important;
+}
+
+.notification-page .list-group-item.notification-row.read:hover {
+  --bs-list-group-bg: #dde9ff;
+  background-color: #dde9ff !important;
+}
+
+.notification-page .list-group-item.notification-row.deleted:hover {
+  --bs-list-group-bg: #fbdede;
+  background-color: #fbdede !important;
+}
+
+.notification-icon {
+  width: 1.5rem;
+  text-align: center;
+}
+
+.nav-pills .nav-link.active {
+  background-color: #0d6efd;
+  color: #fff;
+}
+
+.nav-pills .nav-link.tab-unread {
+  background-color: #eafaf1;
+  color: #1e7e34;
+}
+
+.nav-pills .nav-link.tab-read {
+  background-color: #eaf2ff;
+  color: #0b5ed7;
+}
+
+.nav-pills .nav-link.tab-deleted {
+  background-color: #fdeaea;
+  color: #b02a37;
+}
+
+.nav-pills .nav-link.tab-all {
+  background-color: #f8f9fa;
+  color: #495057;
+}
+
+.nav-pills .nav-link.tab-unread.active {
+  background-color: #28a745;
+  color: #fff;
+}
+
+.nav-pills .nav-link.tab-read.active {
+  background-color: #0d6efd;
+  color: #fff;
+}
+
+.nav-pills .nav-link.tab-deleted.active {
+  background-color: #dc3545;
+  color: #fff;
+}
+
+.nav-pills .nav-link.tab-all.active {
+  background-color: #6c757d;
+  color: #fff;
+}
+
+.modal-backdrop {
+  background-color: rgba(0, 0, 0, 0.5);
+  opacity: 0.5;
+}
+
+.modal-content {
+  background-color: #fff !important;
+  opacity: 1 !important;
+  filter: none !important;
+}

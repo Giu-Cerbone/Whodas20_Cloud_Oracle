@@ -1,0 +1,44 @@
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v3.4.2)
+
+2026-09-28T23:29:34.392+02:00  INFO 7384 --- [whodas-gateway] [           main] i.w.gateway.WhodasGatewayApplication     : Starting WhodasGatewayApplication using Java 24 with PID 7384 (D:\Progetti\Whodas2.0Project\whodas-be\whodas-gateway\target\whodas-gateway-1.0.0.jar started by Peppino in D:\Progetti\Whodas2.0Project\whodas-be\whodas-gateway)
+2026-09-28T23:29:34.401+02:00 DEBUG 7384 --- [whodas-gateway] [           main] i.w.gateway.WhodasGatewayApplication     : Running with Spring Boot v3.4.2, Spring v6.2.2
+2026-09-28T23:29:34.404+02:00  INFO 7384 --- [whodas-gateway] [           main] i.w.gateway.WhodasGatewayApplication     : No active profile set, falling back to 1 default profile: "default"
+2026-09-28T23:29:37.760+02:00  INFO 7384 --- [whodas-gateway] [           main] o.s.cloud.context.scope.GenericScope     : BeanFactory id=09517ffc-e11b-3363-9fa1-798270eb4586
+2026-09-28T23:29:39.789+02:00 DEBUG 7384 --- [whodas-gateway] [           main] o.s.c.gateway.config.GatewayProperties   : Routes supplied from Gateway Properties: [RouteDefinition{id='whodas-patient-service', predicates=[PredicateDefinition{name='Path', args={_genkey_0=/api/v1/patients, _genkey_1=/api/v1/patients/**}}], filters=[], uri=http://localhost:8081, order=0, metadata={}, enabled=true}, RouteDefinition{id='whodas-questionnaire-service', predicates=[PredicateDefinition{name='Path', args={_genkey_0=/api/v1/questionnaire, _genkey_1=/api/v1/questionnaire/**}}], filters=[], uri=http://localhost:8082, order=0, metadata={}, enabled=true}, RouteDefinition{id='whodas-assessment-service', predicates=[PredicateDefinition{name='Path', args={_genkey_0=/api/v1/assessments, _genkey_1=/api/v1/assessments/**}}], filters=[], uri=http://localhost:8083, order=0, metadata={}, enabled=true}, RouteDefinition{id='whodas-type-compile-quest', predicates=[PredicateDefinition{name='Path', args={_genkey_0=/api/v1/type-compile-quest, _genkey_1=/api/v1/type-compile-quest/**}}], filters=[], uri=http://localhost:8083, order=0, metadata={}, enabled=true}, RouteDefinition{id='whodas-certificate-service', predicates=[PredicateDefinition{name='Path', args={_genkey_0=/api/v1/certificates, _genkey_1=/api/v1/certificates/**}}], filters=[], uri=http://localhost:8084, order=0, metadata={}, enabled=true}]
+2026-09-28T23:29:40.507+02:00  INFO 7384 --- [whodas-gateway] [           main] o.s.c.g.r.RouteDefinitionRouteLocator    : Loaded RoutePredicateFactory [After]
+2026-09-28T23:29:40.508+02:00  INFO 7384 --- [whodas-gateway] [           main] o.s.c.g.r.RouteDefinitionRouteLocator    : Loaded RoutePredicateFactory [Before]
+2026-09-28T23:29:40.510+02:00  INFO 7384 --- [whodas-gateway] [           main] o.s.c.g.r.RouteDefinitionRouteLocator    : Loaded RoutePredicateFactory [Between]
+2026-09-28T23:29:40.511+02:00  INFO 7384 --- [whodas-gateway] [           main] o.s.c.g.r.RouteDefinitionRouteLocator    : Loaded RoutePredicateFactory [Cookie]
+2026-09-28T23:29:40.513+02:00  INFO 7384 --- [whodas-gateway] [           main] o.s.c.g.r.RouteDefinitionRouteLocator    : Loaded RoutePredicateFactory [Header]
+2026-09-28T23:29:40.514+02:00  INFO 7384 --- [whodas-gateway] [           main] o.s.c.g.r.RouteDefinitionRouteLocator    : Loaded RoutePredicateFactory [Host]
+2026-09-28T23:29:40.515+02:00  INFO 7384 --- [whodas-gateway] [           main] o.s.c.g.r.RouteDefinitionRouteLocator    : Loaded RoutePredicateFactory [Method]
+2026-09-28T23:29:40.517+02:00  INFO 7384 --- [whodas-gateway] [           main] o.s.c.g.r.RouteDefinitionRouteLocator    : Loaded RoutePredicateFactory [Path]
+2026-09-28T23:29:40.518+02:00  INFO 7384 --- [whodas-gateway] [           main] o.s.c.g.r.RouteDefinitionRouteLocator    : Loaded RoutePredicateFactory [Query]
+2026-09-28T23:29:40.519+02:00  INFO 7384 --- [whodas-gateway] [           main] o.s.c.g.r.RouteDefinitionRouteLocator    : Loaded RoutePredicateFactory [ReadBody]
+2026-09-28T23:29:40.520+02:00  INFO 7384 --- [whodas-gateway] [           main] o.s.c.g.r.RouteDefinitionRouteLocator    : Loaded RoutePredicateFactory [RemoteAddr]
+2026-09-28T23:29:40.521+02:00  INFO 7384 --- [whodas-gateway] [           main] o.s.c.g.r.RouteDefinitionRouteLocator    : Loaded RoutePredicateFactory [XForwardedRemoteAddr]
+2026-09-28T23:29:40.521+02:00  INFO 7384 --- [whodas-gateway] [           main] o.s.c.g.r.RouteDefinitionRouteLocator    : Loaded RoutePredicateFactory [Weight]
+2026-09-28T23:29:40.522+02:00  INFO 7384 --- [whodas-gateway] [           main] o.s.c.g.r.RouteDefinitionRouteLocator    : Loaded RoutePredicateFactory [CloudFoundryRouteService]
+2026-09-28T23:29:41.573+02:00  INFO 7384 --- [whodas-gateway] [           main] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 2 endpoints beneath base path '/actuator'
+2026-09-28T23:29:42.190+02:00  WARN 7384 --- [whodas-gateway] [           main] iguration$LoadBalancerCaffeineWarnLogger : Spring Cloud LoadBalancer is currently working with the default cache. While this cache implementation is useful for development and tests, it's recommended to use Caffeine cache in production.You can switch to using Caffeine cache, by adding it and org.springframework.cache.caffeine.CaffeineCacheManager to the classpath.
+2026-09-28T23:29:42.504+02:00  INFO 7384 --- [whodas-gateway] [           main] o.s.b.web.embedded.netty.NettyWebServer  : Netty started on port 8080 (http)
+2026-09-28T23:29:42.576+02:00 DEBUG 7384 --- [whodas-gateway] [           main] o.s.c.g.r.RouteDefinitionRouteLocator    : RouteDefinition whodas-patient-service applying {_genkey_0=/api/v1/patients, _genkey_1=/api/v1/patients/**} to Path
+2026-09-28T23:29:42.633+02:00 DEBUG 7384 --- [whodas-gateway] [           main] o.s.c.g.r.RouteDefinitionRouteLocator    : RouteDefinition matched: whodas-patient-service
+2026-09-28T23:29:42.634+02:00 DEBUG 7384 --- [whodas-gateway] [           main] o.s.c.g.r.RouteDefinitionRouteLocator    : RouteDefinition whodas-questionnaire-service applying {_genkey_0=/api/v1/questionnaire, _genkey_1=/api/v1/questionnaire/**} to Path
+2026-09-28T23:29:42.637+02:00 DEBUG 7384 --- [whodas-gateway] [           main] o.s.c.g.r.RouteDefinitionRouteLocator    : RouteDefinition matched: whodas-questionnaire-service
+2026-09-28T23:29:42.638+02:00 DEBUG 7384 --- [whodas-gateway] [           main] o.s.c.g.r.RouteDefinitionRouteLocator    : RouteDefinition whodas-assessment-service applying {_genkey_0=/api/v1/assessments, _genkey_1=/api/v1/assessments/**} to Path
+2026-09-28T23:29:42.642+02:00 DEBUG 7384 --- [whodas-gateway] [           main] o.s.c.g.r.RouteDefinitionRouteLocator    : RouteDefinition matched: whodas-assessment-service
+2026-09-28T23:29:42.643+02:00 DEBUG 7384 --- [whodas-gateway] [           main] o.s.c.g.r.RouteDefinitionRouteLocator    : RouteDefinition whodas-type-compile-quest applying {_genkey_0=/api/v1/type-compile-quest, _genkey_1=/api/v1/type-compile-quest/**} to Path
+2026-09-28T23:29:42.646+02:00 DEBUG 7384 --- [whodas-gateway] [           main] o.s.c.g.r.RouteDefinitionRouteLocator    : RouteDefinition matched: whodas-type-compile-quest
+2026-09-28T23:29:42.647+02:00 DEBUG 7384 --- [whodas-gateway] [           main] o.s.c.g.r.RouteDefinitionRouteLocator    : RouteDefinition whodas-certificate-service applying {_genkey_0=/api/v1/certificates, _genkey_1=/api/v1/certificates/**} to Path
+2026-09-28T23:29:42.650+02:00 DEBUG 7384 --- [whodas-gateway] [           main] o.s.c.g.r.RouteDefinitionRouteLocator    : RouteDefinition matched: whodas-certificate-service
+2026-09-28T23:29:42.666+02:00 DEBUG 7384 --- [whodas-gateway] [           main] o.s.c.g.filter.GatewayMetricsFilter      : New routes count: 5
+2026-09-28T23:29:42.671+02:00  INFO 7384 --- [whodas-gateway] [           main] i.w.gateway.WhodasGatewayApplication     : Started WhodasGatewayApplication in 9.604 seconds (process running for 10.895)

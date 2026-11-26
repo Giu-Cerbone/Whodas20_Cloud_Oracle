@@ -1,0 +1,164 @@
+<div class="modal-backdrop fade show" *ngIf="isOpen" (click)="onBackdropClick($event)"></div>
+
+<div class="modal d-block user-profile-modal" *ngIf="isOpen" tabindex="-1" role="dialog" aria-labelledby="userProfileModalLabel" aria-modal="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title" id="userProfileModalLabel">
+          <i class="fas fa-user-circle me-2"></i>Profilo utente
+        </h5>
+        <button type="button" class="btn-close btn-close-white" (click)="close()" aria-label="Chiudi"></button>
+      </div>
+
+      <div class="modal-body">
+        <!-- Dati profilo -->
+        <div class="row profile-grid mb-3">
+          <div class="col-md-4">
+            <label class="form-label text-muted small mb-0">Nome</label>
+            <div class="fw-semibold">{{ profile?.firstName || user?.firstName }}</div>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label text-muted small mb-0">Cognome</label>
+            <div class="fw-semibold">{{ profile?.lastName || user?.lastName }}</div>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label text-muted small mb-0">Codice Fiscale</label>
+            <div class="fw-semibold">{{ profile?.fiscalCode || '-' }}</div>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label text-muted small mb-0">Data di nascita</label>
+            <div class="fw-semibold">{{ (profile?.birthDate | date:'dd/MM/yyyy') || '-' }}</div>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label text-muted small mb-0">Telefono</label>
+            <div class="fw-semibold">{{ profile?.phone || '-' }}</div>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label text-muted small mb-0">Indirizzo</label>
+            <div class="fw-semibold">{{ profile?.address || '-' }}</div>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label text-muted small mb-0">CAP</label>
+            <div class="fw-semibold">{{ profile?.postalCode || '-' }}</div>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label text-muted small mb-0">Comune</label>
+            <div class="fw-semibold">{{ profile?.comune || '-' }}</div>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label text-muted small mb-0">Città</label>
+            <div class="fw-semibold">{{ profile?.city || '-' }}</div>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label text-muted small mb-0">Stato</label>
+            <div class="fw-semibold">{{ profile?.status || '-' }}</div>
+          </div>
+          <div class="col-md-4" *ngIf="user?.roles?.length">
+            <label class="form-label text-muted small mb-0">Ruoli</label>
+            <div class="fw-semibold">{{ user?.roles?.join(', ') }}</div>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label text-muted small mb-0">Email</label>
+            <div class="fw-semibold">{{ profile?.email || user?.email }}</div>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label text-muted small mb-0">Registrato il</label>
+            <div class="fw-semibold">{{ (profile?.registeredAt | date:'dd/MM/yyyy HH:mm') || '-' }}</div>
+          </div>
+          <div class="col-12 username-cell">
+            <label class="form-label text-muted small mb-0">Username</label>
+            <div class="fw-semibold">{{ profile?.username || user?.username }}</div>
+          </div>
+        </div>
+
+        <hr>
+
+        <!-- Cambio password -->
+        <button type="button" class="btn btn-link p-0 d-flex align-items-center change-toggle" (click)="toggleChange()">
+          <i class="fas me-2" [ngClass]="{'fa-chevron-down': !changeExpanded, 'fa-chevron-up': changeExpanded}"></i>
+          <i class="fas fa-key me-2"></i>Cambia Password
+        </button>
+
+        <div *ngIf="changeExpanded" class="change-section mt-2">
+          <form [formGroup]="changeForm" (ngSubmit)="onSubmit()" novalidate>
+            <div class="mb-3">
+              <label for="currentPassword" class="form-label">Password Attuale</label>
+              <input type="password" id="currentPassword" formControlName="currentPassword" class="form-control"
+                     [ngClass]="{'is-invalid': changeForm.get('currentPassword')?.invalid && changeForm.get('currentPassword')?.touched}"
+                     placeholder="Inserisci la password attuale" autocomplete="current-password">
+              <div class="invalid-feedback">Password attuale obbligatoria</div>
+            </div>
+
+            <div class="mb-3">
+              <label for="newPassword" class="form-label">Nuova Password</label>
+              <input type="password" id="newPassword" formControlName="newPassword" class="form-control"
+                     [ngClass]="{'is-invalid': changeForm.get('newPassword')?.invalid && changeForm.get('newPassword')?.touched}"
+                     placeholder="Inserisci la nuova password" autocomplete="new-password">
+              <div class="text-danger small mt-1 password-requirements">
+                La password deve contenere almeno 10 caratteri, di cui numeri, lettere minuscole, lettere maiuscole e caratteri speciali.
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="confirmPassword" class="form-label">Conferma Nuova Password</label>
+              <input type="password" id="confirmPassword" formControlName="confirmPassword" class="form-control"
+                     [ngClass]="{'is-invalid': changeForm.get('confirmPassword')?.invalid && changeForm.get('confirmPassword')?.touched}"
+                     placeholder="Ripeti la nuova password" autocomplete="new-password">
+              <div class="invalid-feedback" *ngIf="changeForm.get('confirmPassword')?.errors?.['mismatch']">Le password non coincidono</div>
+              <div class="invalid-feedback" *ngIf="changeForm.get('confirmPassword')?.errors?.['required']">Conferma obbligatoria</div>
+            </div>
+
+            <button type="submit" class="btn btn-primary" [disabled]="changing">
+              <span *ngIf="changing" class="spinner-border spinner-border-sm me-1"></span>
+              Aggiorna Password
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="close()">Chiudi</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Conferma aggiornamento password -->
+<div class="modal-backdrop fade show confirm-backdrop" *ngIf="showConfirm" (click)="cancelConfirm()"></div>
+<div class="modal d-block confirm-modal" *ngIf="showConfirm" tabindex="-1" role="dialog" aria-modal="true" aria-labelledby="confirmPasswordLabel">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title" id="confirmPasswordLabel"><i class="fas fa-key me-2"></i>Conferma aggiornamento</h5>
+      </div>
+      <div class="modal-body">
+        Sei sicuro di voler aggiornare la password?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="cancelConfirm()">Annulla</button>
+        <button type="button" class="btn btn-primary" (click)="confirmChange()">Conferma</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Esito aggiornamento password -->
+<div class="modal-backdrop fade show result-backdrop" *ngIf="showResultModal" (click)="closeResultModal()"></div>
+<div class="modal d-block result-modal" *ngIf="showResultModal" tabindex="-1" role="dialog" aria-modal="true" aria-labelledby="resultPasswordLabel">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header text-white" [ngClass]="{'bg-success': resultSuccess, 'bg-danger': !resultSuccess}">
+        <h5 class="modal-title" id="resultPasswordLabel">
+          <i class="fas me-2" [ngClass]="{'fa-check-circle': resultSuccess, 'fa-exclamation-triangle': !resultSuccess}"></i>
+          {{ resultSuccess ? 'Password aggiornata' : 'Aggiornamento non riuscito' }}
+        </h5>
+      </div>
+      <div class="modal-body">
+        {{ resultMessage }}
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn" [ngClass]="{'btn-success': resultSuccess, 'btn-danger': !resultSuccess}" (click)="closeResultModal()">OK</button>
+      </div>
+    </div>
+  </div>
+</div>

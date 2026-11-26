@@ -1,0 +1,1 @@
+username=admin&password=admin&client_id=admin-cli&grant_type=password

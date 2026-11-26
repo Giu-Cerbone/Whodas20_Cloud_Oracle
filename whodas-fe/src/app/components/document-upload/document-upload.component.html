@@ -1,0 +1,296 @@
+<div class="container-fluid py-4">
+  <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+    <h2 class="mb-0"><i class="fas fa-file-import me-2 text-primary"></i>Importa documento compilato</h2>
+    <a class="btn btn-outline-secondary" routerLink="/documents/download">
+      <i class="fas fa-file-pdf me-2"></i> Scarica modello vuoto
+    </a>
+  </div>
+
+  <form [formGroup]="importForm" (ngSubmit)="onSubmit()">
+    <div class="row g-4">
+      <div class="col-lg-6">
+        <!-- Drop zone -->
+        <div class="card shadow-sm mb-4">
+          <div class="card-header bg-light">
+            <h5 class="mb-0"><i class="fas fa-cloud-arrow-up me-2"></i>File da importare</h5>
+          </div>
+          <div class="card-body">
+            <div class="drop-zone text-center p-4"
+                 [class.drag-over]="isDragOver"
+                 [class.has-file]="!!selectedFile"
+                 (drop)="onDrop($event)"
+                 (dragover)="onDragOver($event)"
+                 (dragleave)="onDragLeave($event)">
+              <i class="fas fa-file-arrow-up drop-zone-icon d-block mb-2"></i>
+              @if (selectedFile) {
+                <strong>{{ selectedFile.name }}</strong>
+                <div class="small text-muted">{{ formatSize(selectedFile.size) }}</div>
+                <button class="btn btn-outline-danger btn-sm mt-3" type="button" (click)="onRemoveFile()">
+                  <i class="fas fa-trash me-1"></i> Rimuovi
+                </button>
+              } @else {
+                <strong>Trascina qui il documento compilato</strong>
+                <div class="small text-muted mt-1">oppure</div>
+                <label class="btn btn-outline-primary btn-sm mt-2 mb-0">
+                  <i class="fas fa-folder-open me-1"></i> Seleziona file
+                  <input type="file" class="d-none" accept=".pdf,.doc,.docx,.xls,.xlsx" (change)="onFileSelected($event)">
+                </label>
+              }
+            </div>
+            <div class="small text-muted mt-2">
+              Formati ammessi: PDF, DOC, DOCX, XLS, XLSX &middot; dimensione massima 20 MB
+            </div>
+          </div>
+        </div>
+
+        <!-- Opzioni -->
+        <div class="card shadow-sm">
+          <div class="card-header bg-light">
+            <h5 class="mb-0"><i class="fas fa-sliders me-2"></i>Opzioni di importazione</h5>
+          </div>
+          <div class="card-body">
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="form-label">ID paziente</label>
+                <input type="number" min="1" class="form-control" formControlName="patientId" placeholder="Lascia vuoto per crearlo">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Tipo di compilazione</label>
+                <select class="form-select" formControlName="compileTypeId">
+                  <option [ngValue]="null">Non specificato</option>
+                  @for (type of typeCompileQuests; track $index) {
+                    <option [ngValue]="type.id">{{ type.descType }}</option>
+                  }
+                </select>
+              </div>
+              <div class="col-12">
+                <label class="form-label">Intervistatore</label>
+                <input type="text" class="form-control" formControlName="interviewer" maxlength="120"
+                       placeholder="Nome dell'intervistatore...">
+              </div>
+            </div>
+            <hr>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="createPatientIfMissing" formControlName="createPatientIfMissing">
+              <label class="form-check-label" for="createPatientIfMissing">Crea il paziente se non esiste</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="saveAssessment" formControlName="saveAssessment">
+              <label class="form-check-label" for="saveAssessment">Salva la valutazione</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="submitAndScore" formControlName="submitAndScore">
+              <label class="form-check-label" for="submitAndScore">Invia e calcola il punteggio</label>
+            </div>
+          </div>
+          <div class="card-footer d-flex justify-content-between align-items-center">
+            <small class="text-muted">I dati vengono letti dal documento e salvati nel sistema.</small>
+            <button class="btn btn-primary" type="submit" [disabled]="isSubmitting || !selectedFile">
+              @if (isSubmitting) {
+                <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+              } @else {
+                <i class="fas fa-upload me-2"></i>
+              }
+              Importa documento
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Risultato -->
+      <div class="col-lg-6">
+        @if (isSubmitting) {
+          <div class="card shadow-sm">
+            <div class="card-body text-center py-5">
+              <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Caricamento...</span>
+              </div>
+              <p class="mt-3 text-muted mb-0">Estrazione dei dati in corso...</p>
+            </div>
+          </div>
+        } @else if (result) {
+          <div class="card shadow-sm mb-4">
+            <div class="card-header bg-light d-flex justify-content-between align-items-center">
+              <h5 class="mb-0"><i class="fas fa-circle-check me-2 text-success"></i>Esito importazione</h5>
+              <span class="badge" [class]="getStatusBadgeClass(result.status)">{{ getStatusLabel(result.status) }}</span>
+            </div>
+            <div class="card-body">
+              <div class="small mb-3">
+                <div><i class="fas fa-file me-2 text-primary"></i>{{ result.fileName }} ({{ result.fileType }}, {{ formatSize(result.fileSizeBytes) }})</div>
+                <div class="text-muted"><i class="fas fa-microscope me-2"></i>Metodo: {{ getMethodLabel(result.extractionMethod) }}</div>
+                <div class="text-muted"><i class="fas fa-clock me-2"></i>{{ formatDate(result.createdAt) }} &middot; testo estratto: {{ result.extractedTextLength ?? 0 }} caratteri</div>
+              </div>
+
+              @if (result.patient) {
+                <div class="card mb-3 result-card">
+                  <div class="card-body py-2">
+                    <h6 class="mb-1"><i class="fas fa-user me-2 text-primary"></i>Paziente
+                      @if (result.patient.created) {
+                        <span class="badge bg-info ms-2">creato</span>
+                      }
+                    </h6>
+                    <div class="small">
+                      {{ result.patient.firstName }} {{ result.patient.lastName }}
+                      @if (result.patient.fiscalCode) {
+                        <span class="badge bg-secondary ms-2">{{ result.patient.fiscalCode }}</span>
+                      }
+                      <span class="text-muted ms-2">ID {{ result.patient.id ?? '-' }}</span>
+                    </div>
+                  </div>
+                </div>
+              }
+
+              @if (result.assessment) {
+                <div class="card mb-3 result-card">
+                  <div class="card-body py-2">
+                    <h6 class="mb-1">
+                      <i class="fas fa-clipboard-list me-2 text-primary"></i>Valutazione
+                      @if (result.assessment.created) {
+                        <span class="badge bg-info ms-2">creata</span>
+                      }
+                    </h6>
+                    <div class="small">
+                      ID {{ result.assessment.id ?? '-' }}
+                      <span class="badge ms-2" [class]="getStatusBadgeClass(result.assessment.status)">{{ result.assessment.status || '-' }}</span>
+                    </div>
+                    <div class="small text-muted">
+                      Disabilità: {{ result.assessment.overallPercentDisability !== null && result.assessment.overallPercentDisability !== undefined ? (result.assessment.overallPercentDisability | ceilValue) + '%' : '-' }}
+                      &middot; risposte importate: {{ result.assessment.answersImported ?? 0 }}
+                      @if (result.assessment.interpretation) {
+                        &middot; interpretazione: {{ result.assessment.interpretation }}
+                      }
+                    </div>
+                  </div>
+                </div>
+              }
+
+              <div class="d-flex gap-2 flex-wrap">
+                @if (result.assessment?.id) {
+                  <button class="btn btn-outline-primary btn-sm" type="button" (click)="onGoToAssessment()">
+                    <i class="fas fa-arrow-right me-1"></i> Vai alla valutazione
+                  </button>
+                }
+                <button class="btn btn-outline-secondary btn-sm" type="button" (click)="onDownloadOriginal()" [disabled]="isDownloadingFile">
+                  @if (isDownloadingFile) {
+                    <span class="spinner-border spinner-border-sm me-1" role="status"></span>
+                  } @else {
+                    <i class="fas fa-download me-1"></i>
+                  }
+                  Scarica documento originale
+                </button>
+                <a class="btn btn-outline-secondary btn-sm" routerLink="/documents/history">
+                  <i class="fas fa-history me-1"></i> Storico importazioni
+                </a>
+              </div>
+            </div>
+          </div>
+
+          @if (result.warnings && result.warnings.length > 0) {
+            <div class="alert alert-warning">
+              <div class="d-flex justify-content-between align-items-center">
+                <strong><i class="fas fa-exclamation-triangle me-2"></i>Avvisi ({{ result.warnings.length }})</strong>
+                <button class="btn btn-sm btn-outline-warning" type="button" (click)="showWarnings = !showWarnings">
+                  <i class="fas" [class.fa-chevron-down]="!showWarnings" [class.fa-chevron-up]="showWarnings"></i>
+                </button>
+              </div>
+              @if (showWarnings) {
+                <ul class="small mb-0 mt-2">
+                  @for (warning of result.warnings; track warning) {
+                    <li>{{ warning }}</li>
+                  }
+                </ul>
+              }
+            </div>
+          }
+        } @else {
+          <div class="card shadow-sm">
+            <div class="card-body text-center py-5">
+              <i class="fas fa-file-circle-question fa-4x text-muted mb-3"></i>
+              <p class="text-muted mb-0">Seleziona un documento compilato per vederne l'esito dell'estrazione.</p>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  </form>
+
+  <!-- Item estratti -->
+  @if (result && result.items && result.items.length > 0) {
+    <div class="card shadow-sm mt-4">
+      <div class="card-header bg-light">
+        <h5 class="mb-0"><i class="fas fa-list-check me-2"></i>Item estratti ({{ result.items.length }})</h5>
+      </div>
+      <div class="table-responsive">
+        <table class="table table-hover table-sm mb-0">
+          <thead class="table-light">
+            <tr>
+              <th scope="col">Item</th>
+              <th scope="col">Dominio</th>
+              <th scope="col">Domanda</th>
+              <th scope="col">Valore</th>
+              <th scope="col" class="text-center">Punteggio</th>
+              <th scope="col" class="text-center">Confidenza</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (item of result.items; track trackByItemCode($index, item)) {
+              <tr [class.item-warning]="isItemWarning(item)">
+                <td>{{ item.itemCode || '-' }}</td>
+                <td>{{ item.domainLabelIt || item.domain || '-' }}</td>
+                <td>{{ item.questionTextIt || '-' }}</td>
+                <td>{{ item.rawValue || '-' }}</td>
+                <td class="text-center">
+                  @if (item.score !== null && item.score !== undefined) {
+                    {{ item.score }}
+                  } @else {
+                    <i class="fas fa-minus text-muted" title="Nessun punteggio riconosciuto"></i>
+                  }
+                </td>
+                <td class="text-center" [class.confidence-low]="(item.confidence ?? 0) < 0.6">
+                  {{ formatConfidence(item.confidence) }}
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  }
+
+  <!-- Campi estratti -->
+  @if (result && result.fields && result.fields.length > 0) {
+    <div class="card shadow-sm mt-4">
+      <div class="card-header bg-light">
+        <h5 class="mb-0"><i class="fas fa-table me-2"></i>Campi estratti ({{ result.fields.length }})</h5>
+      </div>
+      <div class="table-responsive">
+        <table class="table table-hover table-sm mb-0">
+          <thead class="table-light">
+            <tr>
+              <th scope="col">Campo</th>
+              <th scope="col">Etichetta</th>
+              <th scope="col">Valore</th>
+              <th scope="col">Valore normalizzato</th>
+              <th scope="col" class="text-center">Confidenza</th>
+              <th scope="col">Origine</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (field of result.fields; track $index) {
+              <tr>
+                <td><code>{{ field.key || '-' }}</code></td>
+                <td>{{ field.label || '-' }}</td>
+                <td>{{ field.rawValue || '-' }}</td>
+                <td>{{ field.normalizedValue || '-' }}</td>
+                <td class="text-center" [class.confidence-low]="(field.confidence ?? 0) < 0.6">
+                  {{ formatConfidence(field.confidence) }}
+                </td>
+                <td>{{ field.source || '-' }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  }
+</div>

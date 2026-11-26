@@ -1,0 +1,52 @@
+<div class="modal-backdrop fade show" *ngIf="isOpen" (click)="onBackdropClick($event)"></div>
+
+<div class="modal d-block guideline-modal" *ngIf="isOpen" tabindex="-1" role="dialog" aria-labelledby="guidelineModalLabel" aria-modal="true">
+  <div class="modal-dialog modal-xl modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title" id="guidelineModalLabel">
+          <i class="fas fa-book me-2"></i>Manuale Utente WHODAS 2.0
+        </h5>
+        <button type="button" class="btn-close btn-close-white" (click)="close()" aria-label="Chiudi"></button>
+      </div>
+      <div class="modal-body p-0">
+        <div class="row g-0 h-100">
+          <div class="col-md-3 guideline-sidebar bg-light border-end">
+            <div class="p-3">
+              <div class="input-group mb-3">
+                <span class="input-group-text bg-white border-end-0"><i class="fas fa-search text-muted"></i></span>
+                <input type="text" class="form-control border-start-0" placeholder="Cerca nel manuale..." [(ngModel)]="searchTerm" (input)="selectSection(filteredSections[0] || null)">
+              </div>
+              <nav class="guideline-nav">
+                <ul class="nav flex-column">
+                  <li class="nav-item" *ngFor="let section of filteredSections">
+                    <a class="nav-link" 
+                       [class.active]="activeSection?.id === section.id"
+                       (click)="selectSection(section)">
+                      <i class="{{section.icon}} me-2"></i>{{ section.title }}
+                    </a>
+                  </li>
+                </ul>
+              </nav>
+            </div>
+          </div>
+          <div class="col-md-9 guideline-content p-4" style="max-height: 70vh; overflow-y: auto;">
+            <div *ngIf="activeSection" [innerHTML]="activeSection.content"></div>
+            <div *ngIf="!activeSection && filteredSections.length === 0" class="text-center text-muted py-5">
+              <i class="fas fa-search fa-2x mb-2"></i>
+              <p>Nessuna sezione trovata per "{{ searchTerm }}"</p>
+            </div>
+            <div *ngIf="!activeSection && filteredSections.length > 0" class="text-center text-muted py-5">
+              <i class="fas fa-book-open fa-2x mb-2"></i>
+              <p>Seleziona una sezione dal menu laterale</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer border-top">
+        <small class="text-muted me-auto">WHODAS 2.0 Platform - Manuale Utente v1.0</small>
+        <button type="button" class="btn btn-secondary" (click)="close()">Chiudi</button>
+      </div>
+    </div>
+  </div>
+</div>
