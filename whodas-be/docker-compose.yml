@@ -358,7 +358,7 @@
       - DB_USERNAME=${DB_USERNAME:-postgres}
       - DB_PASSWORD=${DB_PASSWORD:-postgres}
       - SERVER_PORT=7001
-      - KEYCLOAK_BASE_URL=http://host.docker.internal:8180
+      - KEYCLOAK_BASE_URL=http://keycloak:8080
       - PATIENT_SERVICE_URL=http://patient-service:7002
       - QUESTIONNAIRE_SERVICE_URL=http://questionnaire-service:7003
       - ASSESSMENT_SERVICE_URL=http://assessment-service:7004

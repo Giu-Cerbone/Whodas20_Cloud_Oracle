@@ -17,25 +17,39 @@ spring:
           enabled: false
       filter:
         request-body-caching:
-          enabled: true
+          enabled: false
       routes:
         # Auth controller (local) - explicit forward routes for each endpoint
         - id: auth-login
           uri: forward:/api/v1/auth/login
           predicates:
             - Path=/api/v1/auth/login
+          filters:
+            - CacheRequestBody
         - id: auth-refresh
           uri: forward:/api/v1/auth/refresh
           predicates:
             - Path=/api/v1/auth/refresh
+          filters:
+            - CacheRequestBody
         - id: auth-client-token
           uri: forward:/api/v1/auth/client-token
           predicates:
             - Path=/api/v1/auth/client-token
+          filters:
+            - CacheRequestBody
         - id: auth-validate
           uri: forward:/api/v1/auth/validate
           predicates:
             - Path=/api/v1/auth/validate
+          filters:
+            - CacheRequestBody
+        - id: auth-test-body
+          uri: forward:/api/v1/auth/test-body
+          predicates:
+            - Path=/api/v1/auth/test-body
+          filters:
+            - CacheRequestBody
         # Patient Service
         - id: whodas-patient-service
           uri: ${PATIENT_SERVICE_URL:http://localhost:7002}

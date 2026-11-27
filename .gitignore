@@ -1,0 +1,23 @@
+# Logs
+*.log
+*.log.*
+logs/
+
+# Maven target directories
+**/target/
+
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docker
+docker-compose.override.yml
+
+# Environment
+.env
+.env.local
