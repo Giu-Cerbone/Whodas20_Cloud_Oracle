@@ -21,26 +21,27 @@ export class GuidelineService {
           <h2>Benvenuto in WHODAS 2.0 Platform</h2>
           <p>WHODAS 2.0 Platform è il sistema web ufficiale per la somministrazione, gestione e certificazione del questionario <strong>WHO Disability Assessment Schedule 2.0 (WHODAS 2.0)</strong>, lo strumento standardizzato dell'Organizzazione Mondiale della Sanità per la valutazione della disabilità e del funzionamento.</p>
           
-          <h3>Obiettivi della Piattaforma</h3>
-          <ul>
-             <li><strong>Somministrazione guidata</strong> del questionario a 36 item in tre modalità:
-               <ul>
-                 <li><strong>Autosomministrato</strong>: il paziente compila il questionario da solo. Note: non è obbligatorio che sia presente il medico curante.</li>
-                 <li><strong>Somministrato da un intervistatore</strong>: un professionista (medico, psicologo, assistente sociale o altro operatore formato) legge le domande e registra le risposte del paziente. Note: le risposte devono comunque provenire dal paziente, eventualmente con l'aiuto di un operatore che spiega le domande.</li>
-                 <li><strong>Proxy</strong>: un familiare, caregiver o altra persona che assiste il paziente risponde al posto suo quando quest'ultimo non è in grado di farlo adeguatamente. Note: se il paziente ha difficoltà cognitive, comunicative o di altro tipo, può essere utilizzata la compilazione tramite proxy (familiare/caregiver).</li>
-               </ul>
-             </li>
-            <li><strong>Calcolo automatico</strong> dei punteggi per i 6 domini funzionali (Cognizione, Mobilità, Cura di sé, Relazioni, Attività della vita, Partecipazione)</li>
-            <li><strong>Interpretazione standardizzata</strong>: NONE, MILD, MODERATE, SEVERE, EXTREME</li>
-            <li><strong>Generazione certificati PDF</strong> ufficiali con dati anagrafici, punteggi e firma digitale</li>
-            <li><strong>Gestione completa pazienti</strong>: anagrafica, storico valutazioni, documenti</li>
-            <li><strong>Single Sign-On aziendale</strong> via Keycloak con federazione LDAP</li>
-            <li><strong>Notifiche real-time</strong> per eventi di sistema e scadenze</li>
-            <li><strong>Import/Export documenti</strong> con OCR per digitalizzazione cartaceo</li>
-          </ul>
+           <h3>Obiettivi della Piattaforma</h3>
+           <ul>
+              <li><strong>Somministrazione guidata</strong> del questionario a 36 item in tre modalità:
+                <ul>
+                  <li><strong>Autosomministrato</strong>: il paziente compila il questionario da solo. Note: non è obbligatorio che sia presente il medico curante.</li>
+                  <li><strong>Somministrato da un intervistatore</strong>: un professionista (medico, psicologo, assistente sociale o altro operatore formato) legge le domande e registra le risposte del paziente. Note: le risposte devono comunque provenire dal paziente, eventualmente con l'aiuto di un operatore che spiega le domande.</li>
+                  <li><strong>Proxy</strong>: un familiare, caregiver o altra persona che assiste il paziente risponde al posto suo quando quest'ultimo non è in grado di farlo adeguatamente. Note: se il paziente ha difficoltà cognitive, comunicative o di altro tipo, può essere utilizzata la compilazione tramite proxy (familiare/caregiver).</li>
+                </ul>
+              </li>
+             <li><strong>Calcolo automatico</strong> dei punteggi per i 6 domini funzionali (Cognizione, Mobilità, Cura di sé, Relazioni, Attività della vita, Partecipazione)</li>
+             <li><strong>Interpretazione standardizzata</strong> del livello di disabilità: NONE, MILD, MODERATE, SEVERE, EXTREME</li>
+             <li><strong>Generazione certificati PDF</strong> ufficiali con dati anagrafici, punteggi e firma</li>
+             <li><strong>Gestione completa pazienti</strong>: anagrafica, storico valutazioni, documenti</li>
+             <li><strong>Accesso sicuro</strong> con credenziali aziendali e recupero password</li>
+             <li><strong>Supporto password temporanea</strong> per il primo accesso e reset guidato</li>
+             <li><strong>Notifiche</strong> per eventi di sistema, scadenze certificati e azioni utente</li>
+             <li><strong>Gestione documenti</strong> con upload, download e archiviazione clinica</li>
+           </ul>
           
           <h3>Accesso al Sistema</h3>
-          <p>L'accesso avviene tramite credenziali aziendali (username/password) gestite da Keycloak con federazione LDAP. Al primo accesso, se non si possiedono credenziali, è possibile richiedere la registrazione tramite il pulsante <strong>"Nuova registrazione"</strong> nella pagina di login.</p>
+           <p>L'accesso avviene tramite credenziali aziendali (username/password). Al primo accesso, se non si possiedono credenziali, è possibile richiedere la registrazione tramite il pulsante <strong>"Nuova registrazione"</strong> nella pagina di login.</p>
           
           <div class="alert alert-info">
             <strong>Nota:</strong> La piattaforma è ottimizzata per browser moderni (Chrome, Firefox, Edge, Safari). JavaScript deve essere abilitato.
@@ -75,7 +76,7 @@ export class GuidelineService {
             <tbody>
               <tr><td>Credenziali non valide</td><td>Username o password errati</td><td>Verificare maiuscole/minuscole, riprovare</td></tr>
               <tr><td>Account bloccato</td><td>Troppi tentativi falliti</td><td>Attendere 15 min o contattare admin</td></tr>
-              <tr><td>Sessione scaduta</td><td>Token JWT scaduto (1 ora)</td><td>Rifare login</td></tr>
+              <tr><td>Sessione scaduta</td><td>Sessione non attiva da oltre 1 ora</td><td>Rifare login</td></tr>
             </tbody>
           </table>
           
@@ -88,7 +89,7 @@ export class GuidelineService {
         id: 'registrazione',
         title: 'Registrazione Nuovo Utente',
         icon: 'fas fa-user-plus',
-        keywords: ['registrazione', 'nuovo utente', 'iscrizione', 'account', 'ldap', 'keycloak'],
+        keywords: ['registrazione', 'nuovo utente', 'iscrizione', 'account', 'richiesta', 'aziendale'],
         content: `
           <h2>Registrazione Self-Service</h2>
           <p>Gli utenti senza credenziali possono richiedere un account tramite il pulsante <strong>"Nuova registrazione"</strong> nella pagina di login. Il processo è completamente automatizzato e richiede l'inserimento di 12 campi.</p>
@@ -113,21 +114,20 @@ export class GuidelineService {
           </table>
           
           <h3>Validazione in Tempo Reale</h3>
-          <p>Quando il cursore esce dai campi <strong>Codice Fiscale</strong> ed <strong>Email</strong> (evento <em>onBlur</em>), il sistema verifica automaticamente l'unicità:</p>
+          <p>Quando il cursore esce dai campi <strong>Codice Fiscale</strong> ed <strong>Email</strong>, il sistema verifica automaticamente l'unicità:</p>
           <ul>
             <li>Se <strong>già esistente</strong>: appare un modal di avviso giallo</li>
             <li>Se <strong>disponibile</strong>: nessun messaggio, procedere normalmente</li>
           </ul>
           
-          <h3>Processo Backend (Automatico)</h3>
-          <ol>
-            <li>Validazione dati e unicità (CF, Email, Username)</li>
-            <li>Creazione utente in <strong>OpenLDAP</strong> sotto <code>ou=users,dc=whodascompany,dc=local</code></li>
-            <li>Sincronizzazione <strong>Keycloak</strong> (full sync provider LDAP)</li>
-            <li>Assegnazione ruolo <code>user</code> in Keycloak</li>
-            <li>Salvataggio audit in tabella <code>registered_users</code> (status ATTIVO)</li>
-            <li>Rollback automatico se Keycloak sync fallisce (cancellazione utente LDAP)</li>
-          </ol>
+           <h3>Processo di Registrazione (Automatico)</h3>
+           <ol>
+             <li>Validazione dati e unicità (CF, Email, Username)</li>
+             <li>Creazione account in modo automatico e sicuro</li>
+             <li>Assegnazione ruolo utente standard</li>
+             <li>Salvataggio audit della registrazione</li>
+             <li>Annullamento automatico in caso di errore</li>
+           </ol>
           
           <h3>Dopo la Registrazione</h3>
           <ul>
@@ -136,9 +136,9 @@ export class GuidelineService {
             <li>Account immediatamente utilizzabile</li>
           </ul>
           
-          <div class="alert alert-success">
-            <strong>Completato!</strong> L'utente è provvisto in LDAP, Keycloak e DB in un'unica transazione atomica.
-          </div>
+           <div class="alert alert-success">
+             <strong>Completato!</strong> L'account è stato creato e può essere utilizzato immediatamente.
+           </div>
         `
       },
       {
@@ -172,7 +172,7 @@ export class GuidelineService {
           <h2>Gestione Pazienti</h2>
           <p>Sezione dedicata all'anagrafica dei pazienti e alla gestione dello storico clinico.</p>
           
-          <h3>Elenco Pazienti (<code>/patients</code>)</h3>
+          <h3>Elenco Pazienti</h3>
           <ul>
             <li>Tabella paginata, ordinabile per colonna</li>
             <li>Ricerca full-text per: Cognome, Codice Fiscale, Nome</li>
@@ -180,7 +180,7 @@ export class GuidelineService {
             <li>Badge stato: <span class="badge bg-success">Attivo</span> / <span class="badge bg-secondary">Archiviato</span></li>
           </ul>
           
-          <h3>Nuovo Paziente (<code>/patients/new</code>)</h3>
+          <h3>Nuovo Paziente</h3>
           <table>
             <thead><tr><th>Campo</th><th>Obbligatorio</th><th>Validazione</th></tr></thead>
             <tbody>
@@ -198,7 +198,7 @@ export class GuidelineService {
             </tbody>
           </table>
           
-          <h3>Modifica Paziente (<code>/patients/edit/:id</code>)</h3>
+          <h3>Modifica Paziente</h3>
           <p>Stesso form del nuovo paziente, pre-compilato. Il Codice Fiscale non è modificabile se esistono assessment collegati.</p>
           
           <div class="alert alert-info">
@@ -215,7 +215,7 @@ export class GuidelineService {
           <h2>Questionario WHODAS 2.0 e Assessment</h2>
           <p>Cuore della piattaforma: somministrazione del questionario standardizzato a 36 item suddivisi in 6 domini funzionali.</p>
           
-          <h3>Selezione Paziente e Tipo Compilazione (<code>/questionnaire</code>)</h3>
+          <h3>Selezione Paziente e Tipo Compilazione</h3>
           <ul>
             <li>Ricerca paziente per CF o cognome</li>
             <li>Selezione <strong>Tipo Compilazione</strong>:
@@ -228,7 +228,7 @@ export class GuidelineService {
             <li>Selezione lingua (italiano default)</li>
           </ul>
           
-          <h3>Runner Questionario (<code>/assessment/run/:patientId</code>)</h3>
+          <h3>Somministrazione del Questionario</h3>
           <ul>
             <li>Navigazione step-by-step (1 item per schermata)</li>
             <li>Barra progresso visiva (1-36)</li>
@@ -295,32 +295,32 @@ export class GuidelineService {
           <h2>Gestione Documenti</h2>
           <p>Sistema completo per import, export, OCR e archiviazione documenti clinici e amministrativi.</p>
           
-          <h3>Upload Documenti (<code>/documents</code>)</h3>
+          <h3>Upload Documenti</h3>
           <ul>
             <li>Drag & drop o click per selezione file</li>
             <li>Formati supportati: <strong>PDF, DOC/DOCX, XLS/XLSX, JPG, PNG, TIFF</strong></li>
             <li>Dimensione max: 50 MB per file</li>
             <li>Associazione obbligatoria a Paziente e (opzionale) Assessment</li>
-            <li>Metadati automatici: checksum SHA-256, data upload, utente</li>
+            <li>Metadati automatici: verifica di integrità, data upload, utente</li>
           </ul>
           
-          <h3>OCR e Estrazione Dati</h3>
-          <ul>
-            <li>Motore: <strong>Tesseract (Tess4J)</strong> per immagini e PDF scannerizzati</li>
-            <li>Estrazione automatica: dati anagrafici, codice fiscale, date, punteggi WHODAS</li>
-            <li>Campi estratti con <strong>confidence score</strong> (0-100%)</li>
-            <li>Revisione manuale prima della conferma</li>
-            <li>Creazione automatica paziente/assessment se dati completi</li>
-          </ul>
+           <h3>OCR e Estrazione Dati</h3>
+           <ul>
+             <li>Motore OCR integrato per immagini e documenti scannerizzati</li>
+             <li>Estrazione automatica: dati anagrafici, codice fiscale, date, punteggi WHODAS</li>
+             <li>Campi estratti con indicatore di affidabilità (0-100%)</li>
+             <li>Revisione manuale prima della conferma</li>
+             <li>Creazione automatica paziente/assessment se dati completi</li>
+           </ul>
           
-          <h3>Download Documenti (<code>/documents/download</code>)</h3>
+          <h3>Download Documenti</h3>
           <ul>
             <li>Filtro per paziente, tipo, data, stato</li>
             <li>Download singolo o multiplo (ZIP)</li>
             <li>Log download per audit trail</li>
           </ul>
           
-          <h3>Storico Import/Export (<code>/documents/history</code>)</h3>
+          <h3>Storico Import/Export</h3>
           <ul>
             <li>Tabella completa con: filename, paziente, assessment, metodo estrazione, stato, data</li>
             <li>Stati: <span class="badge bg-primary">PENDING</span> <span class="badge bg-success">COMPLETED</span> <span class="badge bg-danger">FAILED</span> <span class="badge bg-warning">REVIEW</span></li>
@@ -328,9 +328,9 @@ export class GuidelineService {
             <li>Rielaborazione OCR per documenti falliti</li>
           </ul>
           
-          <div class="alert alert-info">
-            <strong>Privacy:</strong> Tutti i documenti sono memorizzati criptati (BYTEA PostgreSQL) e accessibili solo utenti autorizzati.
-          </div>
+           <div class="alert alert-info">
+             <strong>Privacy:</strong> Tutti i documenti sono memorizzati in modo protetto e accessibili solo agli utenti autorizzati.
+           </div>
         `
       },
       {
@@ -342,13 +342,13 @@ export class GuidelineService {
           <h2>Gestione Certificati</h2>
           <p>Generazione, visualizzazione e gestione dei certificati WHODAS 2.0 ufficiali in formato PDF.</p>
           
-          <h3>Generazione Automatica</h3>
-          <ul>
-            <li>Attivata al completamento assessment (status COMPLETED)</li>
-            <li>Motore: <strong>iText 8</strong> con template AcroForm</li>
-            <li>Numerazione progressiva univoca per anno</li>
-            <li>Validità standard: 12 mesi dalla data emissione</li>
-          </ul>
+           <h3>Generazione Automatica</h3>
+           <ul>
+             <li>Attivata al completamento assessment (status COMPLETED)</li>
+             <li>Generazione automatica del documento PDF ufficiale</li>
+             <li>Numerazione progressiva univoca per anno</li>
+             <li>Validità standard: 12 mesi dalla data emissione</li>
+           </ul>
           
           <h3>Contenuto Certificato</h3>
           <ul>
@@ -361,7 +361,7 @@ export class GuidelineService {
             <li>QR code per verifica autenticità (opzionale)</li>
           </ul>
           
-          <h3>Gestione (<code>/certificates</code>)</h3>
+          <h3>Gestione</h3>
           <ul>
             <li>Elenco certificati con filtri: paziente, stato, data emissione, scadenza</li>
             <li>Stati: <span class="badge bg-success">VALIDO</span> <span class="badge bg-warning">IN SCADENZA</span> (<30gg) <span class="badge bg-danger">SCADUTO</span> <span class="badge bg-secondary">REVOCATO</span></li>
@@ -385,10 +385,10 @@ export class GuidelineService {
         id: 'notifiche',
         title: 'Notifiche',
         icon: 'fas fa-bell',
-        keywords: ['notifiche', 'campanella', 'badge', 'sse', 'real-time', 'email', 'push'],
+        keywords: ['notifiche', 'campanella', 'badge', 'tempo reale', 'real-time', 'email'],
         content: `
           <h2>Sistema Notifiche</h2>
-          <p>Notifiche real-time via Server-Sent Events (SSE) e email per eventi di sistema, scadenze e azioni utente.</p>
+          <p>Notifiche in tempo reale e via email per eventi di sistema, scadenze e azioni utente.</p>
           
           <h3>Navbar - Campanella Notifiche</h3>
           <ul>
@@ -400,12 +400,12 @@ export class GuidelineService {
                 <li>Marcare singola come letta</li>
                 <li>Eliminare singola</li>
                 <li><strong>Marcare tutte come lette</strong></li>
-                <li>Link <strong>"Gestisci"</strong> → pagina completa <code>/notifications</code></li>
+                <li>Link <strong>"Gestisci"</strong> → pagina completa delle notifiche</li>
               </ul>
             </li>
           </ul>
           
-          <h3>Pagina Notifiche Completa (<code>/notifications</code>)</h3>
+          <h3>Pagina Notifiche Completa</h3>
           <ul>
             <li>Tabella paginata con filtri: tipo, stato, data range</li>
             <li>Stati: <span class="badge bg-primary">SPEDITO</span> <span class="badge bg-success">LETTO</span> <span class="badge bg-warning">MODIFICATO</span> <span class="badge bg-danger">CANCELLATO</span></li>
@@ -426,13 +426,12 @@ export class GuidelineService {
             </tbody>
           </table>
           
-          <h3>Tecnologia SSE</h3>
-          <ul>
-            <li>Connessione persistente HTTP/1.1 (endpoint <code>/api/v1/notifications/stream</code>)</li>
-            <li>Auto-riconnesione su disconnessione</li>
-            <li>Chiusura automatica su logout o navigazione pagina login</li>
-            <li>Header Authorization: Basic base64(username:token) per autenticazione</li>
-          </ul>
+           <h3>Aggiornamento in Tempo Reale</h3>
+           <ul>
+             <li>Connessione persistente per notifiche istantanee</li>
+             <li>Riconnesione automatica in caso di disconnessione</li>
+             <li>Chiusura automatica al logout</li>
+           </ul>
         `
       },
       {
@@ -448,21 +447,21 @@ export class GuidelineService {
           <ul>
             <li>Elenco utenti con paginazione e ricerca (username, email, nome, cognome)</li>
             <li>Stato account: <span class="badge bg-success">ATTIVO</span> <span class="badge bg-warning">SCADUTO</span> <span class="badge bg-danger">CANCELLATO</span></li>
-            <li>Sorgente: <span class="badge bg-info">LDAP</span> (federati) / <span class="badge bg-primary">LOCAL</span> (registrati self-service)</li>
+            <li>Sorgente: <span class="badge bg-info">Aziendale</span> (federati) / <span class="badge bg-primary">Locale</span> (registrati self-service)</li>
             <li>Azioni: <strong>Visualizza dettagli</strong>, <strong>Disabilita/Abilita</strong>, <strong>Reset Password</strong>, <strong>Elimina (soft)</strong></li>
-            <li>Visualizzazione ruoli Keycloak assegnati</li>
-            <li>Link diretto a Keycloak Admin Console per gestione avanzata</li>
+<li>Visualizzazione ruoli assegnati</li>
+             <li>Link diretto alla console di amministrazione per la gestione avanzata</li>
           </ul>
           
           <h3>Reset Password Admin</h3>
           <ul>
             <li>Genera token temporaneo (validità 24h)</li>
-            <li>Invia email all'utente con link <code>/reset-password?token=...</code></li>
+            <li>Invia email all'utente con link di reset univoco</li>
             <li>Utente imposta nuova password (policy: min 8 char, maiuscola, numero, speciale)</li>
           </ul>
           
           <div class="alert alert-warning">
-            <strong>Attenzione:</strong> La disabilitazione utente in Keycloak revoca immediatamente tutti i token attivi. L'utente viene scollegato alla prossima richiesta.
+            <strong>Attenzione:</strong> La disabilitazione utente revoca immediatamente l'accesso: l'utente viene scollegato alla prossima azione.
           </div>
         `
       },
@@ -480,19 +479,19 @@ export class GuidelineService {
             <li>Pagina login → click <strong>"Password dimenticata?"</strong></li>
             <li>Inserimento <strong>username</strong> o <strong>email</strong> registrata</li>
             <li>Sistema verifica esistenza e invia email con link univoco</li>
-            <li>Link format: <code>/reset-password?token=XYZ123</code> (validità 24 ore)</li>
+            <li>Link di reset univoco inviato via email (validità 24 ore)</li>
             <li>Pagina reset: inserimento <strong>nuova password</strong> (2x conferma)</li>
             <li>Validazione policy: min 8 char, 1 maiuscola, 1 numero, 1 speciale</li>
             <li>Conferma → login automatico con nuove credenziali</li>
           </ol>
           
-          <h3>Token Reset Password</h3>
-          <ul>
-            <li>Memorizzato in tabella <code>password_reset_tokens</code> (hash, non plaintext)</li>
-            <li>Single-use: invalidato al primo utilizzo</li>
-            <li>Scadenza automatica: 24 ore dalla generazione</li>
-            <li>Rate limiting: max 3 richieste/ora per email</li>
-          </ul>
+           <h3>Token Reset Password</h3>
+           <ul>
+             <li>Memorizzato in forma protetta (hash, non testo in chiaro)</li>
+             <li>Utilizzabile una sola volta</li>
+             <li>Scadenza automatica: 24 ore dalla generazione</li>
+             <li>Limite richieste: max 3 per ora per email</li>
+           </ul>
           
           <h3>Cambio Password da Loggato</h3>
           <p>Non ancora implementato in UI. Attualmente solo tramite admin o flusso "dimenticata". Previsto in roadmap v1.1.</p>
@@ -506,31 +505,30 @@ export class GuidelineService {
         content: `
           <h2>Sicurezza e Privacy</h2>
           
-          <h3>Autenticazione</h3>
-          <ul>
-            <li><strong>Keycloak</strong> Identity Provider (OIDC/SAML 2.0)</li>
-            <li>Federazione <strong>LDAP</strong> per utenti aziendali</li>
-            <li>Token <strong>JWT RS256</strong> (access: 1h, refresh: 24h)</li>
-            <li>Introspection token ad ogni richiesta via API Gateway</li>
-            <li>Header auth: <code>Authorization: Basic base64(username:access_token)</code></li>
-          </ul>
-          
-          <h3>Autorizzazione</h3>
-          <ul>
-            <li>Ruolo base: <code>user</code> (tutti gli utenti)</li>
-            <li>Ruoli admin gestiti in Keycloak (realm roles)</li>
-            <li>Frontend: route guard per autenticazione</li>
-            <li>Backend: validazione token + ruoli (da implementare fully)</li>
-          </ul>
-          
-          <h3>Protezione Dati</h3>
-          <ul>
-            <li>HTTPS obbligatorio in produzione (Let's Encrypt + nginx reverse proxy)</li>
-            <li>Database: password hashate (BCrypt), token hashati</li>
-            <li>Documenti: memorizzati come BYTEA criptati in PostgreSQL</li>
-            <li>Comunicazione inter-servizi: rete Docker isolata</li>
-            <li>Secrets: variabili d'ambiente (file <code>.env</code> non in repo)</li>
-          </ul>
+           <h3>Autenticazione</h3>
+           <ul>
+             <li>Accesso tramite credenziali aziendali</li>
+             <li>Federazione con directory aziendale</li>
+             <li>Sessione con scadenza automatica</li>
+             <li>Token di accesso rinnovabile</li>
+           </ul>
+           
+           <h3>Autorizzazione</h3>
+           <ul>
+             <li>Ruolo base per tutti gli utenti</li>
+             <li>Ruoli amministrativi gestiti centralmente</li>
+             <li>Controllo accesso alle pagine protette</li>
+             <li>Validazione permessi su ogni richiesta</li>
+           </ul>
+           
+           <h3>Protezione Dati</h3>
+           <ul>
+             <li>Connessione sicura in produzione</li>
+             <li>Password e token protetti</li>
+             <li>Documenti memorizzati in modo protetto</li>
+             <li>Comunicazione tra servizi isolata</li>
+             <li>Secrets gestiti tramite variabili d'ambiente</li>
+           </ul>
           
           <h3>GDPR Compliance</h3>
           <ul>
@@ -565,7 +563,7 @@ export class GuidelineService {
             <thead><tr><th>Problema</th><th>Soluzione</th></tr></thead>
             <tbody>
               <tr><td>"Credenziali non valide" ma sono corrette</td><td>Verifica Caps Lock, prova "Password dimenticata", contatta admin se account bloccato</td></tr>
-              <tr><td>Redirect continuo a /login</td><td>Cookie/cache browser: pulisci cache, prova incognito, verifica orario sistema</td></tr>
+              <tr><td>Redirect continuo alla pagina di login</td><td>Cookie/cache browser: pulisci cache, prova incognito, verifica orario sistema</td></tr>
               <tr><td>Token scaduto durante lavoro</td><td>Normale dopo 1h inattività: rifai login, i dati bozza sono salvati (DRAFT)</td></tr>
             </tbody>
           </table>
@@ -602,8 +600,8 @@ export class GuidelineService {
           <table>
             <thead><tr><th>Problema</th><th>Soluzione</th></tr></thead>
             <tbody>
-              <tr><td>Badge non aggiornato</td><td>Riclicca campanella, o ricarica pagina (SSE si riconnette)</td></tr>
-              <tr><td>Email non ricevute</td><td>Controlla spam, verifica email profilo, contatta admin per configurazione SMTP</td></tr>
+<tr><td>Badge non aggiornato</td><td>Riclicca campanella o ricarica pagina: la connessione si ripristina automaticamente</td></tr>
+               <tr><td>Email non ricevute</td><td>Controlla spam, verifica email profilo, contatta admin per la configurazione della posta</td></tr>
             </tbody>
           </table>
           
@@ -611,7 +609,7 @@ export class GuidelineService {
           <ul>
             <li>Email: <code>whodas_info@yahoo.com</code></li>
             <li>Includi: username, browser, ora, screenshot errore, passi per riprodurre</li>
-            <li>Log applicazione: <code>/logs</code> (solo admin)</li>
+            <li>Log applicazione disponibili solo per l'admin</li>
           </ul>
         `
       },

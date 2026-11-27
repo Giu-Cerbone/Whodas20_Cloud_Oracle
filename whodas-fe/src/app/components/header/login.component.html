@@ -1,7 +1,19 @@
 <div class="login-container">
   <div class="login-card">
-    <h2><i class="fas fa-stethoscope me-2"></i>WHODAS 2.0</h2>
+    <h2>  <div class="analog-clock me-2">
+    <span class="clock-tooltip">{{ clockHint() }}</span>
+    <span class="num n12">12</span>
+    <span class="num n3">3</span>
+    <span class="num n6">6</span>
+    <span class="num n9">9</span>
+    <div class="hand hour" [style.animation-delay]="hourDelay"></div>
+    <div class="hand minute" [style.animation-delay]="minuteDelay"></div>
+    <div class="hand second" [style.animation-delay]="secondDelay"></div>
+    <div class="center"></div>
+  </div>
+  <i class="fas fa-stethoscope me-2"></i>WHODAS 2.0</h2>
     <p class="subtitle">Accesso al sistema</p>
+    <hr class="form-separator">
 
     <div class="alert alert-success" *ngIf="registered">Registrazione completata con successo! Ora puoi accedere con le tue credenziali.</div>
     <div class="alert alert-danger" *ngIf="error">{{ error }}</div>
@@ -39,8 +51,8 @@
       </button>
     </form>
 
-    <div class="d-flex justify-content-between mt-3">
-      <button type="button" class="btn btn-link p-0" (click)="openForgotPassword()">Password dimenticata?</button>
+    <div class="d-flex justify-content-between mt-3 login-actions-row">
+      <button type="button" class="btn btn-outline-secondary" (click)="openForgotPassword()">Password dimenticata?</button>
       <button type="button" class="btn btn-outline-secondary" (click)="goRegister()">
         Nuova registrazione
       </button>

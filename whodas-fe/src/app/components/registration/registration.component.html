@@ -1,7 +1,19 @@
 <div class="registration-container">
   <div class="registration-card">
-    <h2><i class="fas fa-stethoscope me-2"></i>WHODAS 2.0</h2>
+    <h2><div class="analog-clock me-2">
+      <span class="clock-tooltip">{{ clockHint() }}</span>
+      <span class="num n12">12</span>
+      <span class="num n3">3</span>
+      <span class="num n6">6</span>
+      <span class="num n9">9</span>
+      <div class="hand hour" [style.animation-delay]="hourDelay"></div>
+      <div class="hand minute" [style.animation-delay]="minuteDelay"></div>
+      <div class="hand second" [style.animation-delay]="secondDelay"></div>
+      <div class="center"></div>
+    </div>
+    <i class="fas fa-stethoscope me-2"></i>WHODAS 2.0</h2>
     <p class="subtitle">Registrazione nuova utenza</p>
+    <hr class="form-separator">
 
     <form (ngSubmit)="onSubmit(regForm)" #regForm="ngForm" novalidate>
       <div class="form-grid">

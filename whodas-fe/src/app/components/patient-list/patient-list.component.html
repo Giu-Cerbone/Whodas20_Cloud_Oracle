@@ -28,7 +28,7 @@
           </select>
         </div>
         <div class="col-md-2">
-          <button class="btn btn-outline-secondary w-100" type="button" (click)="clearFilters()" title="Pulisci filtri">
+          <button class="btn btn-outline-secondary w-100" type="button" (click)="clearFilters()" data-tooltip="Pulisci filtri">
             <i class="fas fa-eraser"></i>
           </button>
         </div>
@@ -83,10 +83,10 @@
                   <td>{{ patient.gender || '-' }}</td>
                   <td class="text-center">
                     <div class="btn-group btn-group-sm" role="group">
-                      <button class="btn btn-outline-primary" type="button" (click)="onEdit(patient)" title="Modifica" aria-label="Modifica">
+                      <button class="btn btn-outline-primary" type="button" (click)="onEdit(patient)" data-tooltip="Modifica" aria-label="Modifica">
                         <i class="fas fa-edit"></i>
                       </button>
-                      <button class="btn btn-outline-danger" type="button" (click)="onDelete(patient)" title="Elimina" aria-label="Elimina">
+                      <button class="btn btn-outline-danger" type="button" (click)="onDelete(patient)" data-tooltip="Elimina" aria-label="Elimina">
                         <i class="fas fa-trash"></i>
                       </button>
                     </div>

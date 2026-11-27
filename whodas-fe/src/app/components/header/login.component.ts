@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -15,7 +15,7 @@ import { UserProfileModalComponent } from '../user-profile-modal/user-profile-mo
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
-export class HeaderComponent implements OnInit {
+export class HeaderComponent implements OnInit, OnDestroy {
   username = '';
   password = '';
   error = '';
@@ -30,11 +30,22 @@ export class HeaderComponent implements OnInit {
   newPassword = '';
   confirmNewPassword = '';
   changePasswordError = '';
+  now: Date = new Date();
+  hourDelay = '0s';
+  minuteDelay = '0s';
+  secondDelay = '0s';
+  private clockTimer: number | undefined;
 
   constructor(public authService: AuthService, public userService: UserService, private router: Router, private route: ActivatedRoute) {}
 
   ngOnInit(): void {
     this.registered = this.route.snapshot.queryParams['registered'] === 'true';
+    this.syncClock();
+    this.startClockTimer();
+  }
+
+  ngOnDestroy(): void {
+    this.stopClockTimer();
   }
 
   goRegister(): void {
@@ -47,6 +58,40 @@ export class HeaderComponent implements OnInit {
 
   onGuidelineClose(): void {
     this.showGuideline = false;
+  }
+
+  private syncClock(): void {
+    const d = new Date();
+    this.now = d;
+    const h = d.getHours() * 3600 + d.getMinutes() * 60 + d.getSeconds();
+    const m = d.getMinutes() * 60 + d.getSeconds();
+    this.hourDelay = `-${h % 43200}s`;
+    this.minuteDelay = `-${m % 3600}s`;
+    this.secondDelay = `-${d.getSeconds()}s`;
+  }
+
+  private startClockTimer(): void {
+    const tick = (): void => {
+      this.now = new Date();
+      this.clockTimer = window.setTimeout(tick, 1000 - (Date.now() % 1000));
+    };
+    tick();
+  }
+
+  private stopClockTimer(): void {
+    if (this.clockTimer !== undefined) {
+      window.clearTimeout(this.clockTimer);
+      this.clockTimer = undefined;
+    }
+  }
+
+  clockHint(): string {
+    const d = this.now;
+    const s = d.toLocaleString('it-IT', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    const months = ['gennaio','febbraio','marzo','aprile','maggio','giugno','luglio','agosto','settembre','ottobre','novembre','dicembre'];
+    let out = s.charAt(0).toUpperCase() + s.slice(1);
+    months.forEach(m => { out = out.replace(m, m.charAt(0).toUpperCase() + m.slice(1)); });
+    return out;
   }
 
   openForgotPassword(): void {

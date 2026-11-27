@@ -67,7 +67,7 @@
               <button *ngIf="activeFilter !== 'deleted' && notification.dataElimina === null"
                       type="button" class="btn btn-sm btn-outline-secondary"
                       (click)="$event.stopPropagation(); deleteNotification(notification)"
-                      title="Elimina">
+                      data-tooltip="Elimina">
                 <i class="fas fa-trash"></i>
               </button>
             </div>

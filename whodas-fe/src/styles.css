@@ -37,7 +37,20 @@ body {
   color: #052c65;
 }
 
-/* Global focus style: very pale blue background on focus */
+/* Global cursor pointer for clickable elements */
+button,
+a,
+[role="button"],
+[onclick],
+[tabindex],
+.btn,
+.nav-link,
+.list-group-item-action,
+[data-section],
+.clickable,
+.cursor-pointer {
+  cursor: pointer;
+}
 input:focus,
 select:focus,
 textarea:focus,
@@ -45,3 +58,55 @@ textarea:focus,
 .form-select:focus {
   background-color: #eef4fb !important;
 }
+
+/* Analog clock */
+.analog-clock { position: relative; width: 28px; height: 28px; border: 2px solid #fff; border-radius: 50%; background: rgba(255,255,255,0.15); box-shadow: 0 0 6px rgba(0,0,0,0.25); }
+.analog-clock .hand { position: absolute; bottom: 50%; left: 50%; transform-origin: bottom center; border-radius: 2px; z-index: 1; }
+.analog-clock .hour { width: 2px; height: 8px; margin-left: -1px; background: #fff; animation: rotateHour 43200s linear infinite; }
+.analog-clock .minute { width: 1.5px; height: 11px; margin-left: -0.75px; background: #fff; animation: rotateMinute 3600s linear infinite; }
+.analog-clock .second { width: 1px; height: 12px; margin-left: -0.5px; background: #ff6b6b; animation: rotateSecond 60s linear infinite; }
+.analog-clock .center { position: absolute; top: 50%; left: 50%; width: 4px; height: 4px; margin: -2px 0 0 -2px; background: #fff; border-radius: 50%; }
+@keyframes rotateHour { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+@keyframes rotateMinute { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+@keyframes rotateSecond { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+
+
+.analog-clock .num { position: absolute; font-size: 6px; color: #fff; line-height: 1; z-index: 2; text-shadow: 0 0 2px #000, 0 0 2px #000; }
+.analog-clock .n12 { top: 1px; left: 50%; transform: translateX(-50%); }
+.analog-clock .n3 { right: 2px; top: 50%; transform: translateY(-50%); }
+.analog-clock .n6 { bottom: 1px; left: 50%; transform: translateX(-50%); }
+.analog-clock .n9 { left: 2px; top: 50%; transform: translateY(-50%); }
+
+
+
+.login-container .analog-clock .num { color: #000; text-shadow: none; }
+
+.sidebar-brand { cursor: default !important; }
+
+.login-card h2 { display: flex; align-items: center; justify-content: center; gap: 0.5rem; }
+
+.analog-clock { overflow: visible; }
+.clock-tooltip { display: none; position: absolute; top: 100%; left: 100%; transform: none; background: #fff3e0; color: #1b5e20; padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 400; white-space: nowrap; box-shadow: 0 2px 8px rgba(0,0,0,0.2); z-index: 9999; }
+.analog-clock:hover .clock-tooltip { display: block; }
+
+/* Tooltip generico (stesso stile del tooltip dell'orologio) */
+[data-tooltip] { position: relative; }
+[data-tooltip]::after { display: none; content: attr(data-tooltip); position: absolute; bottom: 100%; right: 0; transform: none; background: #fff3e0; color: #1b5e20; padding: 4px 8px; border-radius: 6px; font-size: 11px; white-space: nowrap; box-shadow: 0 2px 8px rgba(0,0,0,0.2); z-index: 9999; pointer-events: none; }
+[data-tooltip]:hover::after { display: block; }
+
+.sidebar .analog-clock .hour, .sidebar .analog-clock .minute { background: #fff; }
+.login-container .analog-clock .hour, .login-container .analog-clock .minute { background: #000; }
+.sidebar .analog-clock .center { background: #fff; }
+.login-container .analog-clock .center { background: #000; }
+
+.registration-container .analog-clock .num { color: #000; text-shadow: none; }
+.registration-container .analog-clock .hour, .registration-container .analog-clock .minute { background: #000; }
+.registration-container .analog-clock .center { background: #000; }
+
+
+
+
+
+
+

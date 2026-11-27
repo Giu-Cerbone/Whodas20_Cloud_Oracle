@@ -1,5 +1,5 @@
 <div class="notification-wrapper">
-  <button type="button" class="btn btn-outline-light btn-sm position-relative" (click)="togglePanel()" title="Vedi Notifiche">
+  <button type="button" class="btn btn-outline-light btn-sm position-relative" (click)="togglePanel()" data-tooltip="Vedi Notifiche">
     <i class="fas fa-bell me-1"></i>
     <span *ngIf="unreadCount > 0" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
       {{ unreadCount > 99 ? '99+' : unreadCount }}
@@ -36,17 +36,17 @@
           <i *ngIf="notification.typeMessage !== 'Warning' && notification.typeMessage !== 'Info' && notification.typeMessage !== 'Error'" class="fas fa-bell text-primary"></i>
         </div>
         <div class="notification-content">
-          <div class="notification-oggetto" title="{{ notification.oggetto }}">
+          <div class="notification-oggetto" [attr.data-tooltip]="notification.oggetto">
             {{ notification.oggetto }}
           </div>
-          <div class="notification-description" title="{{ notification.description }}">
+          <div class="notification-description" [attr.data-tooltip]="notification.description">
             {{ notification.description | slice: 0:100 }}<span *ngIf="notification.description.length > 100">...</span>
           </div>
           <div class="notification-time">
             <i class="fas fa-clock me-1"></i>{{ notification.dataSpedizione | date:'dd/MM/yyyy HH:mm' }}
           </div>
         </div>
-        <button class="btn btn-sm btn-outline-secondary notification-delete" (click)="$event.stopPropagation(); deleteNotification(notification)" title="Elimina">
+        <button class="btn btn-sm btn-outline-secondary notification-delete" (click)="$event.stopPropagation(); deleteNotification(notification)" data-tooltip="Elimina">
           <i class="fas fa-times"></i>
         </button>
       </div>

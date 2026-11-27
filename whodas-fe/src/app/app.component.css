@@ -16,7 +16,7 @@
   z-index: 1050;
   display: flex;
   flex-direction: column;
-  overflow-y: auto;
+  overflow-y: visible;
 }
 
 .sidebar-brand {
@@ -24,10 +24,6 @@
   text-decoration: none;
   font-size: 1.25rem;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.sidebar-brand:hover {
-  background: rgba(255, 255, 255, 0.05);
 }
 
 .sidebar .nav-link {
@@ -90,3 +86,8 @@ footer.login-page {
   color: #fff !important;
   text-decoration: underline;
 }
+
+.footer-mail-link {
+  color: #ffd9b3;
+}
+

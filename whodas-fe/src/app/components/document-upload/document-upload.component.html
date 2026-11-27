@@ -243,7 +243,7 @@
                   @if (item.score !== null && item.score !== undefined) {
                     {{ item.score }}
                   } @else {
-                    <i class="fas fa-minus text-muted" title="Nessun punteggio riconosciuto"></i>
+                    <i class="fas fa-minus text-muted" data-tooltip="Nessun punteggio riconosciuto"></i>
                   }
                 </td>
                 <td class="text-center" [class.confidence-low]="(item.confidence ?? 0) < 0.6">

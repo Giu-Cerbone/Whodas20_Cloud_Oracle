@@ -28,6 +28,11 @@ export class AppComponent implements OnInit, OnDestroy {
   private routerSub!: Subscription;
   private popSub!: Subscription;
   private lastUrl = '';
+  now: Date = new Date();
+  hourDelay = '0s';
+  minuteDelay = '0s';
+  secondDelay = '0s';
+  private clockTimer: number | undefined;
 
   constructor(
     private router: Router,
@@ -37,6 +42,9 @@ export class AppComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    this.syncClock();
+    this.startClockTimer();
+
     // Aspetta il primo NavigationEnd per conoscere l'URL reale (dopo redirect)
     this.router.events.pipe(
       filter((event): event is NavigationEnd => event instanceof NavigationEnd),
@@ -45,6 +53,7 @@ export class AppComponent implements OnInit, OnDestroy {
       this.showNavbar = !event.urlAfterRedirects.includes('/login') && !event.urlAfterRedirects.includes('/register') && !event.urlAfterRedirects.includes('/reset-password') && !event.urlAfterRedirects.includes('/forgot-password');
       if (this.showNavbar) {
         this.initNotifications();
+        this.syncClock();
       }
     });
 
@@ -57,6 +66,7 @@ export class AppComponent implements OnInit, OnDestroy {
         this.showNavbar = newShowNavbar;
         if (this.showNavbar) {
           this.initNotifications();
+          this.syncClock();
         } else {
           this.notificationService.disconnect();
           this.userSub?.unsubscribe();
@@ -97,6 +107,7 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.stopClockTimer();
     this.userSub?.unsubscribe();
     this.routerSub?.unsubscribe();
     this.popSub?.unsubscribe();
@@ -130,4 +141,40 @@ export class AppComponent implements OnInit, OnDestroy {
   onUserProfileClose(): void {
     this.showUserProfile = false;
   }
+
+  private syncClock(): void {
+    const d = new Date();
+    this.now = d;
+    const h = d.getHours() * 3600 + d.getMinutes() * 60 + d.getSeconds();
+    const m = d.getMinutes() * 60 + d.getSeconds();
+    this.hourDelay = `-${h % 43200}s`;
+    this.minuteDelay = `-${m % 3600}s`;
+    this.secondDelay = `-${d.getSeconds()}s`;
+  }
+
+  private startClockTimer(): void {
+    const tick = (): void => {
+      this.now = new Date();
+      this.clockTimer = window.setTimeout(tick, 1000 - (Date.now() % 1000));
+    };
+    tick();
+  }
+
+  private stopClockTimer(): void {
+    if (this.clockTimer !== undefined) {
+      window.clearTimeout(this.clockTimer);
+      this.clockTimer = undefined;
+    }
+  }
+
+  clockHint(): string {
+    const d = this.now;
+    const opts: Intl.DateTimeFormatOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' };
+    const s = d.toLocaleString('it-IT', opts);
+    const months = ['gennaio','febbraio','marzo','aprile','maggio','giugno','luglio','agosto','settembre','ottobre','novembre','dicembre'];
+    let out = s.charAt(0).toUpperCase() + s.slice(1);
+    months.forEach(m => { out = out.replace(m, m.charAt(0).toUpperCase() + m.slice(1)); });
+    return out;
+  }
 }
+

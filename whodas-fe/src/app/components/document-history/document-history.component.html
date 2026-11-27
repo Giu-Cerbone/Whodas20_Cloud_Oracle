@@ -53,15 +53,15 @@
                   <td class="text-center">
                     <div class="btn-group btn-group-sm" role="group">
                       <button class="btn btn-outline-primary" type="button" (click)="onOpen(imported)"
-                              [title]="selectedImportId === imported.id ? 'Chiudi dettagli' : 'Dettagli'" aria-label="Dettagli">
+                              [attr.data-tooltip]="selectedImportId === imported.id ? 'Chiudi dettagli' : 'Dettagli'" aria-label="Dettagli">
                         <i class="fas" [class.fa-eye]="selectedImportId !== imported.id" [class.fa-times]="selectedImportId === imported.id"></i>
                       </button>
                       <button class="btn btn-outline-secondary" type="button" (click)="onDownloadOriginal(imported)"
-                              [disabled]="isDownloadingFile" title="Scarica originale" aria-label="Scarica originale">
+                              [disabled]="isDownloadingFile" data-tooltip="Scarica originale" aria-label="Scarica originale">
                         <i class="fas fa-download"></i>
                       </button>
                       <button class="btn btn-outline-danger" type="button" (click)="onDelete(imported)"
-                              title="Elimina" aria-label="Elimina">
+                              data-tooltip="Elimina" aria-label="Elimina">
                         <i class="fas fa-trash"></i>
                       </button>
                     </div>

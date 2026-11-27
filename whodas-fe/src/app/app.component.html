@@ -2,7 +2,7 @@
 <nav *ngIf="showNavbar" class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top shadow">
   <div class="container-fluid">
     <div class="d-flex align-items-center ms-auto">
-      <span class="text-white me-3 small text-nowrap flex-shrink-0 user-badge" (click)="openUserProfile()" role="button" tabindex="0" (keydown.enter)="openUserProfile()" title="Vedi Profilo">
+      <span class="text-white me-3 small text-nowrap flex-shrink-0 user-badge" (click)="openUserProfile()" role="button" tabindex="0" (keydown.enter)="openUserProfile()" data-tooltip="Vedi Profilo">
         <i class="fas fa-user me-1"></i>{{ (authService.currentUserName$ | async) || 'Operatore' }}
       </span>
       <app-notification-panel *ngIf="showNavbar"></app-notification-panel>
@@ -15,7 +15,18 @@
 
 <!-- Sidebar sinistra (solo navigazione) -->
 <aside *ngIf="showNavbar" class="sidebar">
-  <div class="sidebar-brand d-flex align-items-center px-3 py-3" routerLink="/dashboard">
+  <div class="sidebar-brand d-flex align-items-center px-3 py-3">
+    <div class="analog-clock me-2">
+      <span class="clock-tooltip">{{ clockHint() }}</span>
+      <span class="num n12">12</span>
+      <span class="num n3">3</span>
+      <span class="num n6">6</span>
+      <span class="num n9">9</span>
+      <div class="hand hour" [style.animation-delay]="hourDelay"></div>
+      <div class="hand minute" [style.animation-delay]="minuteDelay"></div>
+      <div class="hand second" [style.animation-delay]="secondDelay"></div>
+      <div class="center"></div>
+    </div>
     <i class="fas fa-stethoscope me-2"></i>
     <span class="fw-bold">WHODAS 2.0</span>
   </div>
@@ -68,6 +79,8 @@
 <footer class="footer bg-dark text-light py-3 mt-auto" [class.login-page]="!showNavbar">
   <div class="container-fluid text-center">
     <span class="small">WHODAS 2.0 Platform &copy; 2026 - Sistema per la somministrazione del questionario WHO Disability Assessment Schedule</span>
+    <br>
+    <span class="small">Amministratore del Sistema e Sviluppo : Giuseppe Cerbone - email : <a href="mailto:giuseppe_cerbone@hotmail.com" class="footer-mail-link" data-tooltip="Clicca per contattare e spedire una email">giuseppe_cerbone&#64;hotmail.com</a></span>
   </div>
 </footer>
 

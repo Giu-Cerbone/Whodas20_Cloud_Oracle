@@ -59,12 +59,12 @@
   border-color: #fd7e14 !important;
 }
 
-/* Scale answer buttons - sfondi morbidi e desaturati (non pastello) */
-.btn-lg.bg-success { background-color: #2e8b57 !important; }
-.btn-lg.bg-info { background-color: #4682b4 !important; }
-.btn-lg.bg-warning { background-color: #e6a23c !important; }
-.btn-lg.bg-orange { background-color: #f57c00 !important; }
-.btn-lg.bg-danger { background-color: #c62828 !important; }
+/* Scale answer buttons - colori molto pallidi pastello */
+.btn-lg.bg-success { background-color: #c8e6c9 !important; color: #1b5e20 !important; }
+.btn-lg.bg-info { background-color: #bbdefb !important; color: #0d47a1 !important; }
+.btn-lg.bg-warning { background-color: #ffe082 !important; color: #e65100 !important; }
+.btn-lg.bg-orange { background-color: #ffcc80 !important; color: #e65100 !important; }
+.btn-lg.bg-danger { background-color: #ef9a9a !important; color: #b71c1c !important; }
 
 .btn-group-toggle .btn.active {
   box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
@@ -223,12 +223,17 @@
   background-color: #ffffff !important;
 }
 
-/* Quick navigation buttons */
+/* Quick navigation buttons - ridotti e su un'unica riga */
+.d-flex.flex-nowrap.gap-1 .btn,
 .d-flex.flex-wrap.gap-1 .btn {
-  min-width: 36px;
+  min-width: 28px;
+  font-size: 0.7rem;
+  padding: 0.2rem 0.4rem;
+  white-space: nowrap;
   transition: all 0.15s ease;
 }
 
+.d-flex.flex-nowrap.gap-1 .btn:hover,
 .d-flex.flex-wrap.gap-1 .btn:hover {
   transform: scale(1.1);
 }

@@ -263,6 +263,7 @@ export class QuestionnaireAssessmentComponent implements OnInit {
 
   onStartAssessment(): void {
     if (this.selectedPatient?.id) {
+      this.showPatientSelector = false;
       this.showTypeSelector = true;
       this.selectedType = null;
     }

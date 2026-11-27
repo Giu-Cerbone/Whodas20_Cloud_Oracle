@@ -37,6 +37,11 @@
 .guideline-content {
   line-height: 1.7;
   color: #212529;
+  cursor: default;
+}
+
+.guideline-content * {
+  cursor: default;
 }
 
 .guideline-content h1,
